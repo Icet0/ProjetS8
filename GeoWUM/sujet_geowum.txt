@@ -1,0 +1,14 @@
+
+Projet 4A S8
+
+Geolocalized Web Usage Mining
+
+Mots-clés : application web, Python, Flask, OpenStreetMap, fouille de données (data mining), fichiers journaux (logs), géolocalisation, visualisation.
+
+L'objectif du projet est de développer une application web d'analyse de fichiers logs (de serveurs web) et de visualisation des résultats sur une carte.
+L'analyse de fichiers journaux (logs) permet, en appliquant des techniques de fouille de données (data mining), de découvrir des motifs intéressants pour comprendre et améliorer les sites et les applications Web. On peut par exemple étudier la structure Web ou les profils d'utilisateurs dans le but d'améliorer
+l'organisation interne du site ou de détecter les intérêts des utilisateurs. Les retombées sont notamment stratégiques : augmentation des achats pour les boutiques en ligne, amélioration des recherches effectuées par les utilisateurs, ...
+Parmi les techniques de fouilles de données utilisées, nous pouvons citer l'extraction de motifs (ensembles fréquents ou séquences fréquentes). Afin de fournir une visualisation des résultats sur une carte, nous introduisons la géolocalisation de différentes informations (adresses IP, adresses de lieux,
+...). Un ensemble de filtres ou de contraintes seront utilisés pour faciliter la visualisation (zones géographiques, termes particuliers, ...).
+Une première version de l'application existe. Elle a été développée avec Python et Flask. L'idée est de la reprendre et de l'étendre en ajoutant la partie analyse et fouille de données. 
+

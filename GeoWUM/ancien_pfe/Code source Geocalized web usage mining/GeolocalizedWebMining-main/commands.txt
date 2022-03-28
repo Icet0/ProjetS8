@@ -1,0 +1,28 @@
+TUTO pour lancer le flask :
+
+------- DEPLOIEMENT ------
+
+http://cazeq.pythonanywhere.com/
+
+--------------------------
+
+Sur WSL Ubuntu :
+. venv/bin/activate
+
+LANCER APPLICATION : 
+python app.py
+
+Quitter le VENV : 
+deactivate
+
+la commande repo:
+cd POLYTECH/INFO\ 5A/PFE/PFE\ FLASK/
+
+HEROKU : 
+emailenplus3, mdp univ
+
+voir la DB :
+https://heroku-data-explorer.herokuapp.com/#/
+
+tuto: 
+https://www.postgresqltutorial.com/postgresql-python/create-tables/
