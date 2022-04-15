@@ -36,6 +36,10 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
+/.idea/modules.xml
+/.idea/ProjetS8.iml
+/.idea/vcs.xml
+
 
 # System files
 .DS_Store
