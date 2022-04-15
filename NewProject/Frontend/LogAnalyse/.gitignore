@@ -41,7 +41,6 @@ testem.log
 /.idea/vcs.xml
 
 
-
 # System files
 .DS_Store
 Thumbs.db
