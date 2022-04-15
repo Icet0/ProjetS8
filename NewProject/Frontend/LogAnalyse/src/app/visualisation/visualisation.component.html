@@ -1,0 +1,68 @@
+<div class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" matSort>
+    <!-- Position Column -->
+    <ng-container matColumnDef="Date" >
+      <th mat-header-cell *matHeaderCellDef mat-sort-header > Date </th>
+      <td mat-cell *matCellDef="let element" > {{element.Date}}</td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="Heure">
+
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Heure </th>
+      <td mat-cell *matCellDef="let element"> {{element.Heure}} </td>
+
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="ConsultedPage">
+
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Consulted Page </th>
+      <td mat-cell *matCellDef="let element"> {{element.ConsultedPage}} </td>
+
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="IP">
+
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> IP </th>
+      <td mat-cell *matCellDef="let element"> {{element.IP}} </td>
+
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="VisitedSite">
+
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Visited Site </th>
+      <td mat-cell *matCellDef="let element"> {{element.VisitedSite}} </td>
+
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="StatusCode">
+
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Status Code </th>
+      <td mat-cell *matCellDef="let element"> {{element.StatusCode}} </td>
+
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="DataBytes">
+
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Data(Bytes) </th>
+      <td mat-cell *matCellDef="let element"> {{element.DataBytes}} </td>
+
+    </ng-container>
+
+
+
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row  *matRowDef="let row; columns: displayedColumns;" style="transform: rotate(0);"></tr>
+  </table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+                 showFirstLastButtons
+                 aria-label="Select page of list Cours">
+  </mat-paginator>
+</div>
