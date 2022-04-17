@@ -25,8 +25,8 @@ def json():
         print("KeyError lol")
         myUrl = '*'
       
-      # data = [{"lol":1,"cocorico":"ZARBI"},{"lol":2,"cocorico":"WTF"}]
-      data = getTAB().to_dict(orient = 'records')
+      # data = [{"lol":1,"cocorico":"ZARBI"},{"lol":2,"cocorico":"WTF"}] #exemple de la forme de donnée à retourner
+      data = getallTAB().to_dict(orient = 'records')
       de = {"status":"OK",
              "data":data}
       response = jsonify(de)
