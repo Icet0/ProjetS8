@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {DataFormat} from "./DataFormat";
 import {Observable} from "rxjs";
 import {environment} from "../../environments/environment";
@@ -12,6 +12,8 @@ export class MessageService {
   constructor(private service : HttpClient) { }
 
   sendMessage(Url : string, data : any): Observable<DataFormat>{
+
+    // const headers =  new HttpHeaders()
     let realUrl = environment.backend+Url;
     console.log(realUrl);
     let retour : Observable<DataFormat> = new Observable<DataFormat>();
@@ -22,7 +24,7 @@ export class MessageService {
         console.log("key = "+key+" values = "+data[key]);
       }
     }
-    retour = this.service.post<DataFormat>(realUrl,formData,{withCredentials:true});
+    retour = this.service.post<DataFormat>(realUrl,formData,{withCredentials:true, });
     return retour;
   }
 }
