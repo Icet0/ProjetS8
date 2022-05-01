@@ -10,12 +10,17 @@ import {MatTableModule} from "@angular/material/table";
 import {MatPaginatorModule} from "@angular/material/paginator";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {MatSortModule} from "@angular/material/sort";
+import { CarteComponent } from './carte/carte.component';
+import { AffluenceComponent } from './affluence/affluence/affluence.component';
+import {NgChartsModule} from "ng2-charts";
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
-    VisualisationComponent
+    VisualisationComponent,
+    CarteComponent,
+    AffluenceComponent
   ],
   imports: [
     BrowserModule,
@@ -25,6 +30,7 @@ import {MatSortModule} from "@angular/material/sort";
     MatPaginatorModule,
     BrowserAnimationsModule,
     MatSortModule,
+    NgChartsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
