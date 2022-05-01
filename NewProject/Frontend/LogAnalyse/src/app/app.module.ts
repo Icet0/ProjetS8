@@ -13,6 +13,9 @@ import {MatSortModule} from "@angular/material/sort";
 import { CarteComponent } from './carte/carte.component';
 import { AffluenceComponent } from './affluence/affluence/affluence.component';
 import {NgChartsModule} from "ng2-charts";
+import { VisualisationSiteqComponent } from './visualisation-siteq/visualisation-siteq.component';
+
+
 
 @NgModule({
   declarations: [
@@ -20,7 +23,9 @@ import {NgChartsModule} from "ng2-charts";
     NavbarComponent,
     VisualisationComponent,
     CarteComponent,
-    AffluenceComponent
+    AffluenceComponent,
+    VisualisationSiteqComponent
+
   ],
   imports: [
     BrowserModule,
