@@ -22,6 +22,9 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import 'hammerjs';
 import {ScrollingModule} from "@angular/cdk/scrolling";
+import { VisualisationSiteqComponent } from './visualisation-siteq/visualisation-siteq.component';
+
+
 
 @NgModule({
   declarations: [
@@ -29,7 +32,9 @@ import {ScrollingModule} from "@angular/cdk/scrolling";
     NavbarComponent,
     VisualisationComponent,
     CarteComponent,
-    AffluenceComponent
+    AffluenceComponent,
+    VisualisationSiteqComponent
+
   ],
   imports: [
     BrowserModule,
