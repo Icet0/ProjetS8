@@ -13,7 +13,7 @@ export class MessageService {
 
   sendMessage(Url : string, data : any): Observable<DataFormat>{
 
-    // const headers =  new HttpHeaders()
+    // const headers =  new HttpHeaders("Access-Control-Allow-Origin:http://127.0.0.1:5000")
     let realUrl = environment.backend+Url;
     console.log(realUrl);
     let retour : Observable<DataFormat> = new Observable<DataFormat>();
@@ -24,7 +24,7 @@ export class MessageService {
         console.log("key = "+key+" values = "+data[key]);
       }
     }
-    retour = this.service.post<DataFormat>(realUrl,formData,{withCredentials:true, });
+    retour = this.service.post<DataFormat>(realUrl,formData,{withCredentials:true });
     return retour;
   }
 }
