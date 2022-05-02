@@ -23,23 +23,12 @@ def hello():
 
 @app.route("/json",methods=['POST','GET'])
 def visualisation():
-      try:
-        myUrl = request.environ['HTTP_ORIGIN']
-      except KeyError:
-        print("KeyError lol")
-        myUrl = '*'
-      
       # data = [{"lol":1,"cocorico":"ZARBI"},{"lol":2,"cocorico":"WTF"}] #exemple de la forme de donnée à retourner
       data = getTAB().to_dict(orient = 'records')
       de = {"status":"OK",
              "data":data}
       response = jsonify(de)
-      response.headers.add('Access-Control-Allow-Origin',myUrl)
-      response.headers.add('Access-Control-Allow-Credentials', 'true')
-      response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-      response.headers.add('Content-type','application/json')
-      response.headers.add('charset','utf8')
-      return response
+      return makeRequestHeaders(response)
     
 
 @app.route("/tryAll",methods=['POST','GET'])
@@ -51,7 +40,7 @@ def tryAll():
         myUrl = '*'
       
       data = getallTAB() #get all tab
-      data = data.head(10000)
+      data = data.head(5000)
       data = data.to_dict(orient = 'records')
       
       de = {"status":"OK",
@@ -60,12 +49,7 @@ def tryAll():
 
       content = gzip.compress(json.dumps(de).encode('utf8'), 5)
       response = make_response(content)
-      response.headers.add('Access-Control-Allow-Origin',myUrl)
-      response.headers.add('Access-Control-Allow-Credentials', 'true')
-      response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-      response.headers.add('Content-type','application/json')
-      response.headers.add('charset','utf8')
-      # response.headers['Content-length'] = len(content)
+      response = makeRequestHeaders(response)
       response.headers['Content-Encoding'] = 'gzip'
       return response
 
@@ -74,11 +58,11 @@ def tryAll():
     
 @app.route("/tryAll2",methods=['POST','GET'])
 def tryAll2():
-      try:
-        myUrl = request.environ['HTTP_ORIGIN']
-      except KeyError:
-        print("KeyError lol")
-        myUrl = '*'
+      # try:
+      #   myUrl = request.environ['HTTP_ORIGIN']
+      # except KeyError:
+      #   print("KeyError lol")
+      #   myUrl = '*'
       
       data = getallTAB() #get all tab
       taille = data.shape[0]
@@ -107,34 +91,14 @@ def tryAll2():
 
 @app.route("/afluence",methods=['POST'])
 def afluence():
-      try:
-        myUrl = request.environ['HTTP_ORIGIN']
-      except KeyError:
-        print("KeyError lol")
-        myUrl = '*'
       
       # data = [{"lol":1,"cocorico":"ZARBI"},{"lol":2,"cocorico":"WTF"}] #exemple de la forme de donnée à retourner
       data = getTAB().to_dict(orient = 'records')
       de = {"status":"OK",
              "data":data}
       response = jsonify(de)
-      response.headers.add('Access-Control-Allow-Origin',myUrl)
-      response.headers.add('Access-Control-Allow-Credentials', 'true')
-      response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-      response.headers.add('Content-type','application/json')
-      response.headers.add('charset','utf8')
-      return response
-    
-
-
-
-
-
-
-
-
-
-
+      
+      return makeRequestHeaders(response)
 
 
 
@@ -163,6 +127,41 @@ def streamed_response():
  
 
 
+#FONCTIONS
+
+def makeRequestHeaders(response):
+    try:
+      myUrl = request.environ['HTTP_ORIGIN']
+    except KeyError:
+      print("KeyError lol")
+      myUrl = '*'
+    response.headers.add('Access-Control-Allow-Origin',myUrl)
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+    response.headers.add('Content-type','application/json')
+    response.headers.add('charset','utf8')
+    return response
+
+@app.route('/site',methods=['POST'])
+def getSiteWeb():
+    df = getallTAB()
+    df_site = df['VisitedSite'].unique()
+    df_site = pd.DataFrame(df_site,columns=["siteWeb"]).to_dict(orient = 'records')
+    de = {"status":"OK",
+            "data":df_site}
+    # response = jsonify(de)
+    # return makeRequestHeaders(response)
+    response = gzip.compress(json.dumps(de).encode('utf8'), 5)
+    response = make_response(response)
+    response = makeRequestHeaders(response)
+    response.headers['Content-Encoding'] = 'gzip'
+    return response
+    
+
+
+
+
+#FONCTIONS LOAD DATASET
 
 
 def getTAB():
@@ -179,7 +178,7 @@ def getallTAB():
     return full_df2
 
 
-
+#------------------------------
 
 
 

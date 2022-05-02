@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import {BrowserModule, HammerModule} from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,6 +13,15 @@ import {MatSortModule} from "@angular/material/sort";
 import { CarteComponent } from './carte/carte.component';
 import { AffluenceComponent } from './affluence/affluence/affluence.component';
 import {NgChartsModule} from "ng2-charts";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { MatInputModule } from '@angular/material/input';
+import {  } from "@angular/material";
+import {ReactiveFormsModule} from "@angular/forms";
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import 'hammerjs';
+import {ScrollingModule} from "@angular/cdk/scrolling";
 
 @NgModule({
   declarations: [
@@ -31,6 +40,18 @@ import {NgChartsModule} from "ng2-charts";
     BrowserAnimationsModule,
     MatSortModule,
     NgChartsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    NgbModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    MatAutocompleteModule,
+    HammerModule,
+    ScrollingModule,
+
+
+
+
   ],
   providers: [],
   bootstrap: [AppComponent]
