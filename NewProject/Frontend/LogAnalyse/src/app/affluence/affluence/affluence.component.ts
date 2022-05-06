@@ -2,6 +2,15 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import { ChartConfiguration, ChartEvent, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import annotationPlugin from 'chartjs-plugin-annotation';
+import {MessageService} from "../../message/message.service";
+
+import {FormControl} from '@angular/forms';
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
+
+import {CollectionViewer, DataSource} from '@angular/cdk/collections';
+import {ChangeDetectionStrategy} from '@angular/core';
+import {BehaviorSubject, Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-affluence',
@@ -10,10 +19,15 @@ import annotationPlugin from 'chartjs-plugin-annotation';
 })
 export class AffluenceComponent implements OnInit {
 
+  siteWebList: string[] = ['One', 'Two', 'Three']
+  myControl = new FormControl();
+  filteredOptions!: Observable<string[]>;
+
+
   public lineChartData: ChartConfiguration['data'] = {
     datasets: [
       {
-        data: [ 65, 59, 80, 81, 56, 55, 40 ],
+        data: [65, 59, 80, 81, 56, 55, 40],
         label: 'Series A',
         backgroundColor: 'rgba(148,159,177,0.2)',
         borderColor: 'rgba(148,159,177,1)',
@@ -24,7 +38,7 @@ export class AffluenceComponent implements OnInit {
         fill: 'origin',
       },
       {
-        data: [ 28, 48, 40, 19, 86, 27, 90 ],
+        data: [28, 48, 40, 19, 86, 27, 90],
         label: 'Series B',
         backgroundColor: 'rgba(77,83,96,0.2)',
         borderColor: 'rgba(77,83,96,1)',
@@ -35,7 +49,7 @@ export class AffluenceComponent implements OnInit {
         fill: 'origin',
       },
       {
-        data: [ 180, 480, 770, 90, 1000, 270, 400 ],
+        data: [180, 480, 770, 90, 1000, 270, 400],
         label: 'Series C',
         yAxisID: 'y-axis-1',
         backgroundColor: 'rgba(255,0,0,0.3)',
@@ -47,7 +61,7 @@ export class AffluenceComponent implements OnInit {
         fill: 'origin',
       }
     ],
-    labels: [ 'January', 'February', 'March', 'April', 'May', 'June', 'July' ]
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July']
   };
 
   public lineChartOptions: ChartConfiguration['options'] = {
@@ -75,7 +89,7 @@ export class AffluenceComponent implements OnInit {
     },
 
     plugins: {
-      legend: { display: true },
+      legend: {display: true},
       annotation: {
         annotations: [
           {
@@ -117,11 +131,11 @@ export class AffluenceComponent implements OnInit {
   }
 
   // events
-  public chartClicked({ event, active }: { event?: ChartEvent, active?: {}[] }): void {
+  public chartClicked({event, active}: { event?: ChartEvent, active?: {}[] }): void {
     console.log(event, active);
   }
 
-  public chartHovered({ event, active }: { event?: ChartEvent, active?: {}[] }): void {
+  public chartHovered({event, active}: { event?: ChartEvent, active?: {}[] }): void {
     console.log(event, active);
   }
 
@@ -135,7 +149,7 @@ export class AffluenceComponent implements OnInit {
       const num = AffluenceComponent.generateNumber(i);
       x.data.push(num);
     });
-    this.lineChartData?.labels?.push(`Label ${ this.lineChartData.labels.length }`);
+    this.lineChartData?.labels?.push(`Label ${this.lineChartData.labels.length}`);
 
     this.chart?.update();
   }
@@ -149,17 +163,47 @@ export class AffluenceComponent implements OnInit {
 
   public changeLabel(): void {
     if (this.lineChartData.labels) {
-      this.lineChartData.labels[2] = [ '1st Line', '2nd Line' ];
+      this.lineChartData.labels[2] = ['1st Line', '2nd Line'];
     }
 
     this.chart?.update();
   }
 
 
-
-  constructor() { }
-
-  ngOnInit() {
+  constructor(private service: MessageService) {
   }
 
+  ngOnInit() {
+    console.log("On init affluence ts");
+    this.siteWebList = [""]
+
+
+    this.service.sendMessage("/site", {}).subscribe(
+      (dataSet) => {
+        this.filteredOptions = this.myControl.valueChanges.pipe(
+          startWith(''),
+          map(value => this._filter(value)),
+        );
+        for (let i in dataSet.data) {
+          let siteName: string = dataSet.data[i]["siteWeb"].toString()
+          this.siteWebList.push(siteName)
+
+          // console.log(dataSet.data[i]["siteWeb"]);
+        }
+        console.log(this.myControl.valueChanges);
+        //try
+
+
+      });
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.siteWebList.filter(siteWebList => siteWebList.toLowerCase().includes(filterValue));
+  }
 }
+
+
+
+
