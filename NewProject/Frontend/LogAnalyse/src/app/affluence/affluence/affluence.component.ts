@@ -1,10 +1,10 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, OnInit, ViewChild} from '@angular/core';
 import { ChartConfiguration, ChartEvent, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import {MessageService} from "../../message/message.service";
 
-import {FormControl} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 
@@ -22,12 +22,15 @@ export class AffluenceComponent implements OnInit {
   siteWebList: string[] = ['One', 'Two', 'Three']
   myControl = new FormControl();
   filteredOptions!: Observable<string[]>;
+  selectChange: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
+  siteWeb: string = "";
+  data!:[]
 
 
   public lineChartData: ChartConfiguration['data'] = {
     datasets: [
       {
-        data: [65, 59, 80, 81, 56, 55, 40],
+        data: [65, 59, 80, 81, 56, 55, 40,10,10],
         label: 'Series A',
         backgroundColor: 'rgba(148,159,177,0.2)',
         borderColor: 'rgba(148,159,177,1)',
@@ -37,31 +40,31 @@ export class AffluenceComponent implements OnInit {
         pointHoverBorderColor: 'rgba(148,159,177,0.8)',
         fill: 'origin',
       },
-      {
-        data: [28, 48, 40, 19, 86, 27, 90],
-        label: 'Series B',
-        backgroundColor: 'rgba(77,83,96,0.2)',
-        borderColor: 'rgba(77,83,96,1)',
-        pointBackgroundColor: 'rgba(77,83,96,1)',
-        pointBorderColor: '#fff',
-        pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: 'rgba(77,83,96,1)',
-        fill: 'origin',
-      },
-      {
-        data: [180, 480, 770, 90, 1000, 270, 400],
-        label: 'Series C',
-        yAxisID: 'y-axis-1',
-        backgroundColor: 'rgba(255,0,0,0.3)',
-        borderColor: 'red',
-        pointBackgroundColor: 'rgba(148,159,177,1)',
-        pointBorderColor: '#fff',
-        pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: 'rgba(148,159,177,0.8)',
-        fill: 'origin',
-      }
+      // {
+      //   data: [28, 48, 40, 19, 86, 27, 90],
+      //   label: 'Series B',
+      //   backgroundColor: 'rgba(77,83,96,0.2)',
+      //   borderColor: 'rgba(77,83,96,1)',
+      //   pointBackgroundColor: 'rgba(77,83,96,1)',
+      //   pointBorderColor: '#fff',
+      //   pointHoverBackgroundColor: '#fff',
+      //   pointHoverBorderColor: 'rgba(77,83,96,1)',
+      //   fill: 'origin',
+      // },
+      // {
+      //   data: [180, 480, 770, 90, 1000, 270, 400],
+      //   label: 'Series C',
+      //   yAxisID: 'y-axis-1',
+      //   backgroundColor: 'rgba(255,0,0,0.3)',
+      //   borderColor: 'red',
+      //   pointBackgroundColor: 'rgba(148,159,177,1)',
+      //   pointBorderColor: '#fff',
+      //   pointHoverBackgroundColor: '#fff',
+      //   pointHoverBorderColor: 'rgba(148,159,177,0.8)',
+      //   fill: 'origin',
+      // }
     ],
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July']
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July','August','October','September','November','December']
   };
 
   public lineChartOptions: ChartConfiguration['options'] = {
@@ -171,6 +174,8 @@ export class AffluenceComponent implements OnInit {
 
 
   constructor(private service: MessageService) {
+
+
   }
 
   ngOnInit() {
@@ -178,29 +183,50 @@ export class AffluenceComponent implements OnInit {
     this.siteWebList = [""]
 
 
-    this.service.sendMessage("/site", {}).subscribe(
+    this.service.sendMessage("/topSite", {}).subscribe(
       (dataSet) => {
         this.filteredOptions = this.myControl.valueChanges.pipe(
           startWith(''),
           map(value => this._filter(value)),
         );
         for (let i in dataSet.data) {
-          let siteName: string = dataSet.data[i]["siteWeb"].toString()
+          let siteName: string = dataSet.data[i]["VisitedSite"].toString()
           this.siteWebList.push(siteName)
 
           // console.log(dataSet.data[i]["siteWeb"]);
         }
-        console.log(this.myControl.valueChanges);
-        //try
-
 
       });
+  }
+
+  public _onClick(){
+    console.log("On click");
+    this.myControl.valueChanges.subscribe(
+      (elem) => {
+        console.log("in suscribe");
+        console.log(elem)//ELEM EST LE SITE WEB CLIQUE
+        //On lance la recherche sur l'API
+        this.service.sendMessage("/searchSite",{url:elem}).subscribe(
+          (data) => {
+            //DANS LE SUSCRIBE POUR RELOAD LE GRAPH
+            this.chart?.update();
+
+          }
+        )
+      }
+
+    );
   }
 
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
 
     return this.siteWebList.filter(siteWebList => siteWebList.toLowerCase().includes(filterValue));
+  }
+
+
+  nothing() {
+    console.log("nothing");
   }
 }
 

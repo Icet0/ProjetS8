@@ -1,3 +1,6 @@
+from asyncio.windows_events import NULL
+from concurrent.futures import thread
+from distutils.log import error
 from flask import Flask,render_template,request,jsonify,redirect, url_for,Response,stream_with_context
 import json
 import pandas as pd
@@ -88,7 +91,7 @@ def tryAll2():
 
 
 @app.route("/afluence",methods=['POST'])
-def afluence():
+def affluence():
       
       # data = [{"lol":1,"cocorico":"ZARBI"},{"lol":2,"cocorico":"WTF"}] #exemple de la forme de donnée à retourner
       data = getTAB().to_dict(orient = 'records')
@@ -140,6 +143,9 @@ def makeRequestHeaders(response):
     response.headers.add('charset','utf8')
     return response
 
+
+
+#page affluence
 @app.route('/site',methods=['POST'])
 def getSiteWeb():
     df = getallTAB()
@@ -155,11 +161,71 @@ def getSiteWeb():
     response.headers['Content-Encoding'] = 'gzip'
     return response
     
+@app.route('/topSite',methods=['POST','GET'])
+def getBestSiteWeb():
+  #TOP 15 SITE
+    df = getallTAB()
+    df_site = df['VisitedSite']
+    df_site = df.groupby('VisitedSite').size().to_frame(name = 'nb_occur').sort_values('nb_occur', ascending = False)
+    df_site = df_site.reset_index()
+    df_site = df_site.head(15).to_dict(orient = 'records')
+    de = {"status":"OK",
+            "data":df_site}
+    response = gzip.compress(json.dumps(de).encode('utf8'), 5)
+    response = make_response(response)
+    response = makeRequestHeaders(response)
+    response.headers['Content-Encoding'] = 'gzip'
+    return response
+
+
+@app.route('/searchSite',methods=['POST','GET'])
+def searchSite():
+    df = getallTAB()
+    if(request.form.get('url') != ""):
+        url = request.form.get('url')
+        df_site = df[df['VisitedSite'] == "url"]
+        # A RAJOUTER TRI DU DATAFRAME (MOIS + ENLEVER LES ELTS INUTILES + CPT NB VISITE)
+        df_site = df_site.to_dict(orient = 'records')
+    else :
+      df_site = ""
+    de = {"status":"OK",
+            "data":df_site}
+    response = gzip.compress(json.dumps(de).encode('utf8'), 5)
+    response = make_response(response)
+    response = makeRequestHeaders(response)
+    response.headers['Content-Encoding'] = 'gzip'
+    return response
+
+
+@app.route('/isSite',methods=['POST','GET'])
+def isSite():
+    try:
+      if(request.form.get('url')!=NULL):
+        url = request.form.get('url')
+        df = getallTAB()
+        df_site = df[df['VisitedSite']==url].to_dict(orient = 'records')
+        de = {"status":"OK",
+              "data":df_site}
+        response = gzip.compress(json.dumps(de).encode('utf8'), 5)
+        response = make_response(response)
+        response = makeRequestHeaders(response)
+        response.headers['Content-Encoding'] = 'gzip'
+        return response
+      else:
+        raise ValueError('bad request')
+      
+    except ValueError:
+      print("error, bad request")
+      de = {"status":"error",
+            "data":"Bad request"}
+    finally:
+      return makeRequestHeaders(jsonify(de))
+
+    
 
 
 
 
-#FONCTIONS LOAD DATASET
 
 
 @app.route("/pageSite",methods=['POST','GET'])
@@ -182,6 +248,9 @@ def visualisation_PageSite():
       response.headers.add('Content-type','application/json')
       response.headers.add('charset','utf8')
       return response
+
+#FONCTIONS LOAD DATASET
+
 
 def getTAB():
     url = "./logs/dataset.txt"

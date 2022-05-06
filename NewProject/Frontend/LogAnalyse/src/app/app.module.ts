@@ -23,6 +23,7 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import 'hammerjs';
 import {ScrollingModule} from "@angular/cdk/scrolling";
 import { VisualisationSiteqComponent } from './visualisation-siteq/visualisation-siteq.component';
+import {MatButtonModule} from "@angular/material/button";
 
 
 
@@ -36,28 +37,27 @@ import { VisualisationSiteqComponent } from './visualisation-siteq/visualisation
     VisualisationSiteqComponent
 
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    MatTableModule,
-    MatPaginatorModule,
-    BrowserAnimationsModule,
-    MatSortModule,
-    NgChartsModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    NgbModule,
-    MatInputModule,
-    ReactiveFormsModule,
-    MatAutocompleteModule,
-    HammerModule,
-    ScrollingModule,
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        HttpClientModule,
+        MatTableModule,
+        MatPaginatorModule,
+        BrowserAnimationsModule,
+        MatSortModule,
+        NgChartsModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        NgbModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        MatAutocompleteModule,
+        HammerModule,
+        ScrollingModule,
+        MatButtonModule,
 
 
-
-
-  ],
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })
