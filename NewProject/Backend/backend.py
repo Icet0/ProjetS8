@@ -163,8 +163,14 @@ def siteAffluence():
         url = request.args.get("url")
         search=request.args.get("recherche")
     else:
+def siteAffluence():
+    if(request.method == "GET"):
+        url = request.args.get("url")
+    else:
         url = request.form.get('url')
         search=request.form.get('recherche')
+    if(url != None):
+        print("url : "+url)
     if(url != None):
         print("url : "+url)
         # A RAJOUTER TRI DU DATAFRAME (MOIS + ENLEVER LES ELTS INUTILES + CPT NB VISITE)
@@ -176,9 +182,15 @@ def siteAffluence():
           df_Mois = ajoutMois(res)
           df_gb = groupByMois(df_Mois)
         df_gb = df_gb.to_dict(orient = 'records')
+        res = searchSiteAffluence(url).reset_index(drop=True)
+        df_Mois = ajoutMois(res)
+        df_gbM = groupByMois(df_Mois)
+        df_gbM = df_gbM.to_dict(orient = 'records')
     else :
+      df_gbM = None
       df_gb = None
     de = {"status":"OK",
+            "data":df_gbM}
             "data":df_gb}
     response = gzip.compress(json.dumps(de).encode('utf8'), 5)
     response = make_response(response)
@@ -320,7 +332,24 @@ def ajoutMois(df):
     for i in range(len(df)):
          df.loc[i,"Mois"] = str((df.loc[i,"Date"])[5]) + str((df.loc[i,"Date"])[6])
     return df.sort_values('Mois')
+def searchSiteAffluence(url):
+    df = getallTAB()
+    df = pd.DataFrame(df,columns=['Date', 'Heure', 'IP','VisitedSite','Mois'])
+    if(url != "" and url != None):
+        df_site = df[df['VisitedSite'] == url]
+        # A RAJOUTER TRI DU DATAFRAME (MOIS + ENLEVER LES ELTS INUTILES + CPT NB VISITE)
+        return (df_site)
 
+def ajoutMois(df):
+    for i in range(len(df)):
+         df.loc[i,"Mois"] = str((df.loc[i,"Date"])[5]) + str((df.loc[i,"Date"])[6])
+    return df.sort_values('Mois')
+
+
+def groupByMois(df):
+    df = df.groupby("Mois").size().to_frame(name='count')
+    df = df.reset_index()
+    return df
 
 def groupByMois(df):
     df = df.groupby("Mois").size().to_frame(name='count')

@@ -23,11 +23,13 @@
         </tr>
       </table>
       <div class="button-row">
-        <button mat-button mat-raised-button color="primary" (click)="randomize()">Randomize</button>
-        <button mat-button mat-raised-button color="primary" (click)="pushOne()">Push</button>
+        <button mat-button mat-raised-button color="primary" (click)="changeAbscisse()">Change to {{abscisse}}</button>
+        <button mat-button mat-raised-button color="primary" (click)="pushOne()">Add</button>
         <button mat-button mat-raised-button color="primary" (click)="changeColor()">Recolor</button>
-        <button mat-button mat-raised-button color="primary" (click)="hideOne()">Toggle Series B</button>
-        <button mat-button mat-raised-button color="primary" (click)="changeLabel()">Change Label</button>
+<!--        <button mat-button mat-raised-button color="primary" (click)="hideOne()">Hide One</button>-->
+        <button mat-button mat-raised-button color="primary" (click)="randomize()">Randomize</button>
+
+
       </div>
     </div>
   </div>
@@ -37,29 +39,6 @@
 
 
 
-<!-- Dropright button -->
-
-<!--<div class="mesBlocs">-->
-<!--<div ngbDropdown class="d-inline-block ">-->
-<!--  <button type="button" class="btn btn-outline-primary" id="dropdown1" ngbDropdownToggle>Sites Web</button>-->
-<!--  <div ngbDropdownMenu aria-labelledby="dropdown1">-->
-<!--    &lt;!&ndash; items as buttons &ndash;&gt;-->
-<!--    <button ngbDropdownItem *ngFor="let site of siteWebList" [value]="site">{{site}}</button>-->
-<!--  </div>-->
-<!--</div>-->
-<!--</div>-->
-
-
-<!--<div class="mesBlocs">-->
-<!--<h4>mat-select</h4>-->
-<!--<mat-form-field appearance="fill">-->
-<!--  <mat-label>State</mat-label>-->
-<!--  <mat-select>-->
-<!--    <mat-option>None</mat-option>-->
-<!--    <mat-option *ngFor="let site of siteWebList" [value]="site">{{site}}</mat-option>-->
-<!--  </mat-select>-->
-<!--</mat-form-field>-->
-<!--</div>-->
 
 <div class="mesBlocs">
 
