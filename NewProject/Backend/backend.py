@@ -179,17 +179,22 @@ def getBestSiteWeb():
 
 
 @app.route('/searchSite',methods=['POST','GET'])
-def searchSite():
-    df = getallTAB()
-    if(request.form.get('url') != ""):
+def siteAffluence():
+    if(request.method == "GET"):
+        url = request.args.get("url")
+    else:
         url = request.form.get('url')
-        df_site = df[df['VisitedSite'] == "url"]
+    if(url != None):
+        print("url : "+url)
         # A RAJOUTER TRI DU DATAFRAME (MOIS + ENLEVER LES ELTS INUTILES + CPT NB VISITE)
-        df_site = df_site.to_dict(orient = 'records')
+        res = searchSiteAffluence(url).reset_index(drop=True)
+        df_Mois = ajoutMois(res)
+        df_gbM = groupByMois(df_Mois)
+        df_gbM = df_gbM.to_dict(orient = 'records')
     else :
-      df_site = ""
+      df_gbM = None
     de = {"status":"OK",
-            "data":df_site}
+            "data":df_gbM}
     response = gzip.compress(json.dumps(de).encode('utf8'), 5)
     response = make_response(response)
     response = makeRequestHeaders(response)
@@ -197,10 +202,12 @@ def searchSite():
     return response
 
 
+
+
 @app.route('/isSite',methods=['POST','GET'])
 def isSite():
     try:
-      if(request.form.get('url')!=NULL):
+      if(request.form.get('url')!=None):
         url = request.form.get('url')
         df = getallTAB()
         df_site = df[df['VisitedSite']==url].to_dict(orient = 'records')
@@ -265,6 +272,9 @@ def getallTAB():
     full_df2.columns =['Date', 'Heure', 'ConsultedPage', 'IP','VisitedSite', 'StatusCode','DataBytes']
     return full_df2
 
+
+#FONCTIONS UTILISABLES
+
 def getSiteInfos(df,ip):
     """ Fonction permettant de retourner un dataframe contenant la liste des sites visité par une adresse IP
 
@@ -297,7 +307,24 @@ def getSiteInfos(df,url):
     df_site =  df_ip.groupby('ConsultedPage').size().to_frame(name = 'nb_occur').sort_values(by = 'nb_occur', ascending = False)
     return df_site
 
+def searchSiteAffluence(url):
+    df = getallTAB()
+    df = pd.DataFrame(df,columns=['Date', 'Heure', 'IP','VisitedSite','Mois'])
+    if(url != "" and url != None):
+        df_site = df[df['VisitedSite'] == url]
+        # A RAJOUTER TRI DU DATAFRAME (MOIS + ENLEVER LES ELTS INUTILES + CPT NB VISITE)
+        return (df_site)
 
+def ajoutMois(df):
+    for i in range(len(df)): 
+         df.loc[i,"Mois"] = str((df.loc[i,"Date"])[5]) + str((df.loc[i,"Date"])[6])
+    return df.sort_values('Mois')
+
+
+def groupByMois(df):
+    df = df.groupby("Mois").size().to_frame(name='count')
+    df = df.reset_index()
+    return df
 
 
 if __name__ == "__main__":
