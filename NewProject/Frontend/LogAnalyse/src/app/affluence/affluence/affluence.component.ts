@@ -11,6 +11,7 @@ import {map, startWith} from 'rxjs/operators';
 import {CollectionViewer, DataSource} from '@angular/cdk/collections';
 import {ChangeDetectionStrategy} from '@angular/core';
 import {BehaviorSubject, Subscription} from 'rxjs';
+import {clone} from "chart.js/helpers";
 
 @Component({
   selector: 'app-affluence',
@@ -28,6 +29,9 @@ export class AffluenceComponent implements OnInit {
   lastSiteUrlChoice:string = "";
   cptLabels = 12;
   abscisse: String = "hours";
+  _labelsMonths:String[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July','August','October','September','November','December'];
+  _labelsHours:String[] =  ["01h","02h","03h","04h","05h","06h","07h","08h","09h","10h","11h","12h","13h","14h","15h","16h","17h","18h"
+                            ,"19h","20h","21h","22h","23h"];
 
 
 
@@ -69,7 +73,8 @@ export class AffluenceComponent implements OnInit {
       //   fill: 'origin',
       // }
     ],
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July','August','October','September','November','December']
+
+    labels: clone(this._labelsMonths)
   };
 
   public lineChartOptions: ChartConfiguration['options'] = {
@@ -190,10 +195,22 @@ export class AffluenceComponent implements OnInit {
 
   public changeAbscisse(): void {
     if(this.lastSiteUrlChoice.length > 0) {
-      this.searchSite(this.lastSiteUrlChoice, this.abscisse == "hours" ? "months" : "hours");
+      this.searchSite(this.lastSiteUrlChoice, this.abscisse == "hours" ? "hours" : "months");
+      let len = this.chart?.data?.labels?.length;
+      console.log("len : "+len);
+      for (let i = 0; i < len!; i++){
+        this.chart?.data?.labels?.pop();
+      }
+      console.log(this._labelsMonths);
+      for(let s of this.abscisse == "months" ? clone(this._labelsMonths) : clone(this._labelsHours)){
+        this.chart?.data?.labels?.push(s);
+      }
       this.abscisse = this.abscisse == "hours" ? "months" : "hours";
-      this.chart?.update();
+
+      this.chart?.update();//DEJA FAIT DANS LE SEARCHSITE ??
+
     }
+
   }
 
 
@@ -239,6 +256,7 @@ export class AffluenceComponent implements OnInit {
   }
 
   public searchSite(url:String,recherche:String){
+    let index = recherche=="months"?"Mois":"H";
     this.service.sendMessage("/searchSite",{url:url,recherche:recherche}).subscribe(
       (data) => {
         console.log("Dans lel subscribe du /searchSite")
@@ -248,9 +266,9 @@ export class AffluenceComponent implements OnInit {
         for(let i = 0; i <= this.cptLabels; i++) {
           valid = false;
           for (let j = 0; j < data.data.length; j++) {
-            console.log(data.data[j]['Mois']);
-            if (data.data[j]['Mois'] == i) {
-              console.log("count = " + data.data[j]['count']);
+            // console.log(data.data[j][index]);
+            if (data.data[j][index] == i) {
+              // console.log("count = " + data.data[j]['count']);
               this.lineChartData.datasets[0].data[i-1] = data.data[j]['count'];
               valid = true;
               break;
@@ -261,7 +279,6 @@ export class AffluenceComponent implements OnInit {
           }
         }
         this.chart?.update();
-
       }
     )
   }

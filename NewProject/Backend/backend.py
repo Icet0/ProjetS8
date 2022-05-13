@@ -182,19 +182,25 @@ def getBestSiteWeb():
 def siteAffluence():
     if(request.method == "GET"):
         url = request.args.get("url")
+        search=request.args.get("recherche")
     else:
         url = request.form.get('url')
+        search=request.form.get('recherche')
     if(url != None):
         print("url : "+url)
         # A RAJOUTER TRI DU DATAFRAME (MOIS + ENLEVER LES ELTS INUTILES + CPT NB VISITE)
         res = searchSiteAffluence(url).reset_index(drop=True)
-        df_Mois = ajoutMois(res)
-        df_gbM = groupByMois(df_Mois)
-        df_gbM = df_gbM.to_dict(orient = 'records')
+        if(search=="hours"):
+          df_Heurs = ajoutHeurs(res)
+          df_gb = groupByHeurs(df_Heurs)
+        else:
+          df_Mois = ajoutMois(res)
+          df_gb = groupByMois(df_Mois)
+        df_gb = df_gb.to_dict(orient = 'records')
     else :
-      df_gbM = None
+      df_gb = None
     de = {"status":"OK",
-            "data":df_gbM}
+            "data":df_gb}
     response = gzip.compress(json.dumps(de).encode('utf8'), 5)
     response = make_response(response)
     response = makeRequestHeaders(response)
@@ -326,6 +332,17 @@ def groupByMois(df):
     df = df.reset_index()
     return df
 
+
+def ajoutHeurs(df):
+    for i in range(len(df)): 
+         df.loc[i,"H"] = str((df.loc[i,"Heure"])[0]) + str((df.loc[i,"Heure"])[1])
+    return df.sort_values('H')
+
+
+def groupByHeurs(df):
+    df = df.groupby("H").size().to_frame(name='count')
+    df = df.reset_index()
+    return df
 
 if __name__ == "__main__":
      app.run(debug=True)
