@@ -6,6 +6,8 @@ import json
 import pandas as pd
 from flask import make_response
 import gzip
+import os
+
 
 
 def create_app():
@@ -18,6 +20,7 @@ app = create_app()
 
 @app.route("/")
 def hello():
+    # print("getenv : "+str(os.getenv("My Environment")))
     return 'Hello, World!'
 
 
@@ -103,30 +106,6 @@ def affluence():
 
 
 
-@app.route("/test")
-def test():
-  data = getTAB()
-  taille = data.shape[0]
-  data = data.to_dict(orient = 'records')
-  de = {"status":"OK",
-          "data":data}
-  de["data"][0]["StatusCode"] = taille
-  response = jsonify(de["data"][0])
-  return response
-
-
-    
-@app.route('/stream')
-def streamed_response():
-    stre = "abcdefgijklmnopqrstuvwxyz"
-    @stream_with_context
-    def generate():
-        for i in range (1000):
-          yield stre[i%len(stre)]
-          yield "\n"
-    return Response((generate()))
- 
-
 
 #FONCTIONS
 
@@ -179,17 +158,28 @@ def getBestSiteWeb():
 
 
 @app.route('/searchSite',methods=['POST','GET'])
-def searchSite():
-    df = getallTAB()
-    if(request.form.get('url') != ""):
+def siteAffluence():
+    if(request.method == "GET"):
+        url = request.args.get("url")
+        search=request.args.get("recherche")
+    else:
         url = request.form.get('url')
-        df_site = df[df['VisitedSite'] == "url"]
+        search=request.form.get('recherche')
+    if(url != None):
+        print("url : "+url)
         # A RAJOUTER TRI DU DATAFRAME (MOIS + ENLEVER LES ELTS INUTILES + CPT NB VISITE)
-        df_site = df_site.to_dict(orient = 'records')
+        res = searchSiteAffluence(url).reset_index(drop=True)
+        if(search=="hours"):
+          df_Heurs = ajoutHeurs(res)
+          df_gb = groupByHeurs(df_Heurs)
+        else:
+          df_Mois = ajoutMois(res)
+          df_gb = groupByMois(df_Mois)
+        df_gb = df_gb.to_dict(orient = 'records')
     else :
-      df_site = ""
+      df_gb = None
     de = {"status":"OK",
-            "data":df_site}
+            "data":df_gb}
     response = gzip.compress(json.dumps(de).encode('utf8'), 5)
     response = make_response(response)
     response = makeRequestHeaders(response)
@@ -197,10 +187,12 @@ def searchSite():
     return response
 
 
+
+
 @app.route('/isSite',methods=['POST','GET'])
 def isSite():
     try:
-      if(request.form.get('url')!=NULL):
+      if(request.form.get('url')!=None):
         url = request.form.get('url')
         df = getallTAB()
         df_site = df[df['VisitedSite']==url].to_dict(orient = 'records')
@@ -265,6 +257,9 @@ def getallTAB():
     full_df2.columns =['Date', 'Heure', 'ConsultedPage', 'IP','VisitedSite', 'StatusCode','DataBytes']
     return full_df2
 
+
+#FONCTIONS UTILISABLES
+
 def getSiteInfos(df,ip):
     """ Fonction permettant de retourner un dataframe contenant la liste des sites visité par une adresse IP
 
@@ -297,8 +292,36 @@ def getSiteInfos(df,url):
     df_site =  df_ip.groupby('ConsultedPage').size().to_frame(name = 'nb_occur').sort_values(by = 'nb_occur', ascending = False).reset_index().head(10)
     return df_site
 
+def searchSiteAffluence(url):
+    df = getallTAB()
+    df = pd.DataFrame(df,columns=['Date', 'Heure', 'IP','VisitedSite','Mois'])
+    if(url != "" and url != None):
+        df_site = df[df['VisitedSite'] == url]
+        # A RAJOUTER TRI DU DATAFRAME (MOIS + ENLEVER LES ELTS INUTILES + CPT NB VISITE)
+        return (df_site)
+
+def ajoutMois(df):
+    for i in range(len(df)): 
+         df.loc[i,"Mois"] = str((df.loc[i,"Date"])[5]) + str((df.loc[i,"Date"])[6])
+    return df.sort_values('Mois')
 
 
+def groupByMois(df):
+    df = df.groupby("Mois").size().to_frame(name='count')
+    df = df.reset_index()
+    return df
+
+
+def ajoutHeurs(df):
+    for i in range(len(df)): 
+         df.loc[i,"H"] = str((df.loc[i,"Heure"])[0]) + str((df.loc[i,"Heure"])[1])
+    return df.sort_values('H')
+
+
+def groupByHeurs(df):
+    df = df.groupby("H").size().to_frame(name='count')
+    df = df.reset_index()
+    return df
 
 if __name__ == "__main__":
      app.run(debug=True)
