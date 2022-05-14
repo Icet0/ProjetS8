@@ -263,7 +263,7 @@ export class AffluenceComponent implements OnInit {
         console.log(data);
         //DANS LE SUSCRIBE POUR RELOAD LE GRAPH
         let valid = true;
-        for(let i = 0; i <= this.cptLabels; i++) {
+        for(let i = 0; i <= (this.abscisse=="months"?this._labelsMonths.length:this._labelsHours.length); i++) {
           valid = false;
           for (let j = 0; j < data.data.length; j++) {
             // console.log(data.data[j][index]);

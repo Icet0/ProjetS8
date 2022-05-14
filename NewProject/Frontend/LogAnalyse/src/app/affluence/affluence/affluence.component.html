@@ -54,6 +54,7 @@
              [formControl]="myControl"
              [matAutocomplete]="auto"
              (input)="nothing()">
+
       <mat-autocomplete #auto="matAutocomplete">
         <mat-option *ngFor="let site of filteredOptions | async" [value]="site" (onSelectionChange)="_onClick()">
           {{site}}
