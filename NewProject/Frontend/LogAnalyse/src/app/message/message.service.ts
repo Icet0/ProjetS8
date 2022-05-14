@@ -34,4 +34,8 @@ export class MessageService {
     retour = this.service.post<DataFormat>(realUrl,formData,{withCredentials:true });
     return retour;
   }
+
+  getmessage(url:string) : Observable<any>{
+    return this.service.get<any>(url) ;
+  }
 }
