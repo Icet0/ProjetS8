@@ -6,6 +6,8 @@ import json
 import pandas as pd
 from flask import make_response
 import gzip
+import os
+
 
 
 def create_app():
@@ -18,6 +20,7 @@ app = create_app()
 
 @app.route("/")
 def hello():
+    # print("getenv : "+str(os.getenv("My Environment")))
     return 'Hello, World!'
 
 
@@ -102,30 +105,6 @@ def affluence():
       return makeRequestHeaders(response)
 
 
-
-@app.route("/test")
-def test():
-  data = getTAB()
-  taille = data.shape[0]
-  data = data.to_dict(orient = 'records')
-  de = {"status":"OK",
-          "data":data}
-  de["data"][0]["StatusCode"] = taille
-  response = jsonify(de["data"][0])
-  return response
-
-
-    
-@app.route('/stream')
-def streamed_response():
-    stre = "abcdefgijklmnopqrstuvwxyz"
-    @stream_with_context
-    def generate():
-        for i in range (1000):
-          yield stre[i%len(stre)]
-          yield "\n"
-    return Response((generate()))
- 
 
 
 #FONCTIONS
