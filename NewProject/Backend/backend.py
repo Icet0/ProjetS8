@@ -1,7 +1,7 @@
 from asyncio.windows_events import NULL
 from concurrent.futures import thread
 from distutils.log import error
-from flask import Flask,render_template, request, jsonify, redirect, url_for, Response, stream_with_context
+from flask import Flask,render_template,request,jsonify,redirect, url_for,Response,stream_with_context
 import json
 import pandas as pd
 from flask import make_response
@@ -33,7 +33,7 @@ def visualisation():
              "data":data}
       response = jsonify(de)
       return makeRequestHeaders(response)
-
+    
 
 @app.route("/tryAll",methods=['POST','GET'])
 def tryAll():
@@ -42,14 +42,14 @@ def tryAll():
       except KeyError:
         print("KeyError lol")
         myUrl = '*'
-
+      
       data = getallTAB() #get all tab
       data = data.head(5000)
       data = data.to_dict(orient = 'records')
-
+      
       de = {"status":"OK",
              "data":data}
-
+    
 
       content = gzip.compress(json.dumps(de).encode('utf8'), 5)
       response = make_response(content)
@@ -59,7 +59,7 @@ def tryAll():
 
 
 
-
+    
 @app.route("/tryAll2",methods=['POST','GET'])
 def tryAll2():
       # try:
@@ -67,16 +67,16 @@ def tryAll2():
       # except KeyError:
       #   print("KeyError lol")
       #   myUrl = '*'
-
+      
       data = getallTAB() #get all tab
       taille = data.shape[0]
       data = data.to_dict(orient = 'records')
       de = {"status":"OK",
              "data":data}
-
+    
       response = de
       @stream_with_context
-      def generate():
+      def generate():       
           print(taille)
           for i in range(taille):
               yield json.dumps(response["data"][i])
@@ -95,13 +95,13 @@ def tryAll2():
 
 @app.route("/afluence",methods=['POST'])
 def affluence():
-
+      
       # data = [{"lol":1,"cocorico":"ZARBI"},{"lol":2,"cocorico":"WTF"}] #exemple de la forme de donnée à retourner
       data = getTAB().to_dict(orient = 'records')
       de = {"status":"OK",
              "data":data}
       response = jsonify(de)
-
+      
       return makeRequestHeaders(response)
 
 
@@ -139,7 +139,7 @@ def getSiteWeb():
     response = makeRequestHeaders(response)
     response.headers['Content-Encoding'] = 'gzip'
     return response
-
+    
 @app.route('/topSite',methods=['POST','GET'])
 def getBestSiteWeb():
   #TOP 15 SITE
@@ -163,14 +163,8 @@ def siteAffluence():
         url = request.args.get("url")
         search=request.args.get("recherche")
     else:
-def siteAffluence():
-    if(request.method == "GET"):
-        url = request.args.get("url")
-    else:
         url = request.form.get('url')
         search=request.form.get('recherche')
-    if(url != None):
-        print("url : "+url)
     if(url != None):
         print("url : "+url)
         # A RAJOUTER TRI DU DATAFRAME (MOIS + ENLEVER LES ELTS INUTILES + CPT NB VISITE)
@@ -182,15 +176,9 @@ def siteAffluence():
           df_Mois = ajoutMois(res)
           df_gb = groupByMois(df_Mois)
         df_gb = df_gb.to_dict(orient = 'records')
-        res = searchSiteAffluence(url).reset_index(drop=True)
-        df_Mois = ajoutMois(res)
-        df_gbM = groupByMois(df_Mois)
-        df_gbM = df_gbM.to_dict(orient = 'records')
     else :
-      df_gbM = None
       df_gb = None
     de = {"status":"OK",
-            "data":df_gbM}
             "data":df_gb}
     response = gzip.compress(json.dumps(de).encode('utf8'), 5)
     response = make_response(response)
@@ -217,13 +205,18 @@ def isSite():
         return response
       else:
         raise ValueError('bad request')
-
+      
     except ValueError:
       print("error, bad request")
       de = {"status":"error",
             "data":"Bad request"}
     finally:
       return makeRequestHeaders(jsonify(de))
+
+    
+
+
+
 
 
 
@@ -235,13 +228,9 @@ def visualisation_PageSite():
       except KeyError:
         print("KeyError lol")
         myUrl = '*'
-      if(request.method == "GET"):
-        url = request.args.get("url")
-        search=request.args.get("recherche")
-      else:
-        url = request.form.get('url')
+      
       # data = [{"lol":1,"cocorico":"ZARBI"},{"lol":2,"cocorico":"WTF"}] #exemple de la forme de donnée à retourner
-      infoPage = getSiteInfos(getallTAB(),url).to_dict(orient = 'records')
+      infoPage = getSiteInfos(getTAB(),"saint-leu-974.ville.mygaloo.fr").to_dict(orient = 'records')
       de = {"status":"OK",
              "data":infoPage}
       response = jsonify(de)
@@ -274,50 +263,33 @@ def getallTAB():
 def getSiteInfos(df,ip):
     """ Fonction permettant de retourner un dataframe contenant la liste des sites visité par une adresse IP
 
-    paramètres :
+    paramètres : 
 
     df : dataframe contenant tous les logs.
     ip : chaine de caractère decrivant l'url à avoir.
 
-    retour :
-
+    retour : 
+    
      dataframe listant les sites visité par l'ip.
-
+    
     """
     return df[df['IP'] == ip]
 
 def getSiteInfos(df,url):
-    """ Fonction permettant de retourner un dataframe contenant la liste des sites visité
+    """ Fonction permettant de retourner un dataframe contenant la liste des sites visité par une adresse IP
 
-    paramètres :
-
-    df : dataframe contenant tous les logs.
-    url : chaine de caractère decrivant l'url à avoir.
-
-    retour :
-
-    dc_info : dataframe listant les sites visité par l'ip.
-
-    """
-    df_ip = df[df['VisitedSite'] == url]
-    df_site =  df_ip.groupby('ConsultedPage').size().to_frame(name = 'nb_occur').sort_values(by = 'nb_occur', ascending = False).reset_index().head(10)
-    return df_site
-
-def getSiteIP(df,url):
-    """ Fonction permettant de retourner un dataframe contenant la liste des IP ayant visité un site
-
-    paramètres :
+    paramètres : 
 
     df : dataframe contenant tous les logs.
     url : chaine de caractère decrivant l'url à avoir.
 
-    retour :
-
-    dc_info : dataframe listant les sites visité par l'ip.
-
+    retour : 
+    
+    df_site : dataframe listant les sites visité par l'ip.
+    
     """
-    df_ip = df[df['VisitedSite'] == url]
-    df_site =  df_ip.groupby('IP').size().to_frame(name = 'nb_occur').sort_values(by = 'nb_occur', ascending = False).reset_index().head(20)
+    df_ip = df[df['VisitedSite'] == url] 
+    df_site =  df_ip.groupby('ConsultedPage').size().to_frame(name = 'nb_occur').sort_values(by = 'nb_occur', ascending = False)
     return df_site
 
 def searchSiteAffluence(url):
@@ -329,27 +301,10 @@ def searchSiteAffluence(url):
         return (df_site)
 
 def ajoutMois(df):
-    for i in range(len(df)):
-         df.loc[i,"Mois"] = str((df.loc[i,"Date"])[5]) + str((df.loc[i,"Date"])[6])
-    return df.sort_values('Mois')
-def searchSiteAffluence(url):
-    df = getallTAB()
-    df = pd.DataFrame(df,columns=['Date', 'Heure', 'IP','VisitedSite','Mois'])
-    if(url != "" and url != None):
-        df_site = df[df['VisitedSite'] == url]
-        # A RAJOUTER TRI DU DATAFRAME (MOIS + ENLEVER LES ELTS INUTILES + CPT NB VISITE)
-        return (df_site)
-
-def ajoutMois(df):
-    for i in range(len(df)):
+    for i in range(len(df)): 
          df.loc[i,"Mois"] = str((df.loc[i,"Date"])[5]) + str((df.loc[i,"Date"])[6])
     return df.sort_values('Mois')
 
-
-def groupByMois(df):
-    df = df.groupby("Mois").size().to_frame(name='count')
-    df = df.reset_index()
-    return df
 
 def groupByMois(df):
     df = df.groupby("Mois").size().to_frame(name='count')
@@ -358,7 +313,7 @@ def groupByMois(df):
 
 
 def ajoutHeurs(df):
-    for i in range(len(df)):
+    for i in range(len(df)): 
          df.loc[i,"H"] = str((df.loc[i,"Heure"])[0]) + str((df.loc[i,"Heure"])[1])
     return df.sort_values('H')
 
