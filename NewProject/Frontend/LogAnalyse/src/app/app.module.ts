@@ -28,6 +28,9 @@ import { LoginComponent } from './login/login.component';
 import { CarteWidgetComponent } from './Widgets/carte-widget/carte-widget.component';
 import { CarteViewComponent } from './Views/carte-view/carte-view.component';
 import { RechercheSiteComponent } from './recherche-site/recherche-site.component';
+import { CarteWidgetComponent } from './Widgets/carte-widget/carte-widget.component';
+import { CarteViewComponent } from './Views/carte-view/carte-view.component';
+
 
 
 @NgModule({
@@ -44,6 +47,9 @@ import { RechercheSiteComponent } from './recherche-site/recherche-site.componen
     CarteViewComponent
     VisualisationSiteqComponent,
     RechercheSiteComponent
+    VisualisationSiteqComponent,
+    CarteWidgetComponent,
+    CarteViewComponent
 
   ],
     imports: [
@@ -68,7 +74,7 @@ import { RechercheSiteComponent } from './recherche-site/recherche-site.componen
 
 
     ],
-  providers: [ ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
