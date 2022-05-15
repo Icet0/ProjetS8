@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
-import {MessageService} from "../message/message.service";
+import {MessageService} from "../Service/message/message.service";
 
 
 export interface Tmp {//pour le test

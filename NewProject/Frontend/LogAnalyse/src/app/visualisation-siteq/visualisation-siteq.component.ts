@@ -2,7 +2,7 @@ import DatalabelsPlugin from 'chartjs-plugin-datalabels';
 import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {MessageService} from "../message/message.service";
+import {MessageService} from "../Service/message/message.service";
 
 
 export interface Tmp {//pour le test
