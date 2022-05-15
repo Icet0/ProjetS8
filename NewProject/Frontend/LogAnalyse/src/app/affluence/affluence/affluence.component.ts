@@ -216,13 +216,12 @@ export class AffluenceComponent implements OnInit {
 
   constructor(private service: MessageService) {
 
-
   }
 
   ngOnInit() {
     console.log("On init affluence ts");
     this.siteWebList = [""]
-
+    // this.myControl.updateValueAndValidity(this.nothing);
     this.service.sendMessage("/topSite", {}).subscribe(
       (dataSet) => {
         this.filteredOptions = this.myControl.valueChanges.pipe(
@@ -239,8 +238,22 @@ export class AffluenceComponent implements OnInit {
       });
   }
 
+
+  public _onEnter(){
+    console.log("On enter");
+    console.log(this.myControl.value);
+    let elem = this.myControl.value;
+    if(this.lastSiteUrlChoice != elem && elem.length > 0){
+      console.log("nouveau site url");
+      this.lastSiteUrlChoice = elem;
+      //On lance la recherche sur l'API
+      this.searchSite(elem,this.abscisse=="hours"?"months":"hours");
+    }
+  }
+
   public _onClick(){
     console.log("On click");
+    console.log(this.myControl.value);
     this.myControl.valueChanges.subscribe(
       (elem) => {
         console.log("in suscribe");
@@ -263,7 +276,7 @@ export class AffluenceComponent implements OnInit {
         console.log(data);
         //DANS LE SUSCRIBE POUR RELOAD LE GRAPH
         let valid = true;
-        for(let i = 0; i <= (this.abscisse=="months"?this._labelsMonths.length:this._labelsHours.length); i++) {
+        for(let i = 0; i <= (this.abscisse=="months"?this._labelsHours.length:this._labelsMonths.length); i++) {
           valid = false;
           for (let j = 0; j < data.data.length; j++) {
             // console.log(data.data[j][index]);

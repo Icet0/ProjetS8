@@ -1,4 +1,3 @@
-from cgi import test
 from encodings import utf_8
 from flask import Flask,render_template,request,jsonify,redirect, url_for,Response,stream_with_context
 import json
@@ -6,9 +5,7 @@ import pandas as pd
 from flask import make_response
 import os
 
-import Crypto
-from Crypto.PublicKey import RSA
-from Crypto import Random
+
 import ast
 
 import rsa
@@ -36,7 +33,7 @@ def __init__():
 def hello():
     return 'Hello, World!'
 
-@app.route("/auth")
+@app.route("/auth")#mapping de test
 def auth():
     data = [{'login': 'paul', 'pwd': '123'}, {'login': 'paulo', 'pwd': '123'}]
     # data = json.loads(decrypt(os.getenv("ENCRYPTED_FILE_PATH")))
@@ -62,7 +59,7 @@ def getAllUser():
     return makeRequestHeaders(response)
 
 
-@app.route("/authentification")
+@app.route("/authentification",methods=['POST','GET'])
 def authentification(login=None,pwd=None):
     if(login!= None and pwd != None):
         login = login
@@ -70,10 +67,19 @@ def authentification(login=None,pwd=None):
     else:
         if(request.method == "GET"):
             login = request.args.get("login")
-            pwd=request.args.get("pwd")
+            pwd = request.args.get("pwd")
         else:
-            login = request.form.get('login')
-            pwd=request.form.get('pwd')
+            json_data = json.loads(request.get_json())
+            login =None
+            pwd = None
+            if json_data:
+                if 'login' in json_data:
+                    login = json_data['login']
+
+                if 'pwd' in json_data:
+                    pwd = json_data['pwd']
+
+    print("login : ",login," pwd : ",pwd)
     data,status = getBDD()
     print("Data authentification after getBDD() : ",data)
     if(status != "error"):
@@ -98,8 +104,9 @@ def authentification(login=None,pwd=None):
 
     de = {"status":status,
             "data":data}
-    if(login!= None and pwd != None):
-        return de["status"]
+    print("de : ",de)
+    # if(login!= None and pwd != None):
+    #     return de["status"]
     response = jsonify(de)
     return makeRequestHeaders(response)
 
@@ -107,9 +114,11 @@ def authentification(login=None,pwd=None):
 def isAuth():
     if(os.getenv("Login")==""):
         data = False
+        status="error"
     else:
         data = os.getenv("Login")
-    de = {"status":"OK",
+        status = "OK"
+    de = {"status":status,
             "data":data}
     response = jsonify(de)
     return makeRequestHeaders(response)

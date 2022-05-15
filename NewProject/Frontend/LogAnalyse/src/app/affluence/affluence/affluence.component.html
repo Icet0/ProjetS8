@@ -42,7 +42,7 @@
 
 <div class="mesBlocs">
 
-  <form class="example-form">
+  <div class="example-form">
     <mat-form-field class="example-full-width" appearance="fill">
       <mat-label>Site Web</mat-label>
 
@@ -51,9 +51,11 @@
              placeholder="Pick one"
              aria-label="Number"
              matInput
+
              [formControl]="myControl"
              [matAutocomplete]="auto"
-             (input)="nothing()">
+             (keydown.enter)="_onEnter()"
+      >
 
       <mat-autocomplete #auto="matAutocomplete">
         <mat-option *ngFor="let site of filteredOptions | async" [value]="site" (onSelectionChange)="_onClick()">
@@ -62,6 +64,6 @@
       </mat-autocomplete>
 
     </mat-form-field>
-  </form>
+  </div>
 </div>
 
