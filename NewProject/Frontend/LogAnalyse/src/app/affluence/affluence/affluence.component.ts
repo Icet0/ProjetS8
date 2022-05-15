@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angula
 import {ChartConfiguration, ChartDataset, ChartEvent, ChartType} from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import annotationPlugin from 'chartjs-plugin-annotation';
-import {MessageService} from "../../message/message.service";
+import {MessageService} from "../../Service/message/message.service";
 
 import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
