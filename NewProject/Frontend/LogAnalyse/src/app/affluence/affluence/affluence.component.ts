@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {ChartConfiguration, ChartDataset, ChartEvent, ChartType} from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import annotationPlugin from 'chartjs-plugin-annotation';
@@ -8,10 +8,10 @@ import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, 
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 
-import {CollectionViewer, DataSource} from '@angular/cdk/collections';
-import {ChangeDetectionStrategy} from '@angular/core';
-import {BehaviorSubject, Subscription} from 'rxjs';
 import {clone} from "chart.js/helpers";
+import {HttpClient} from "@angular/common/http";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {RechercheSiteComponent} from "../../recherche-site/recherche-site.component";
 
 @Component({
   selector: 'app-affluence',
@@ -33,6 +33,7 @@ export class AffluenceComponent implements OnInit {
   _labelsHours:String[] =  ["01h","02h","03h","04h","05h","06h","07h","08h","09h","10h","11h","12h","13h","14h","15h","16h","17h","18h"
                             ,"19h","20h","21h","22h","23h"];
 
+  @ViewChild('RechercheSiteComponent') rechercheBarre! : RechercheSiteComponent;
 
 
 
@@ -160,13 +161,8 @@ export class AffluenceComponent implements OnInit {
 
 
 
-  public pushOne(): void {
-    this.lineChartData.datasets.forEach((x, i) => {
-      const num = AffluenceComponent.generateNumber(i);
-      x.data.push(num);
-    });
-    this.lineChartData?.labels?.push(`Label ${this.lineChartData.labels.length}`);
-
+  public pushOne(content:any): void {
+    this.openWindowCustomClass(content);
     this.chart?.update();
   }
 
@@ -214,11 +210,21 @@ export class AffluenceComponent implements OnInit {
   }
 
 
-  constructor(private service: MessageService) {
+  constructor(private service: MessageService,private rooting: HttpClient,private modalService: NgbModal, ) {
 
+  }
+  ngAfterViewInit() {
+    this.rechercheBarre.myControl=this.myControl;
+    this.rechercheBarre.selectChange=this.selectChange;
+    this.rechercheBarre.filteredOptions=this.filteredOptions;
+    this.rechercheBarre.siteWebList = this.siteWebList;
   }
 
   ngOnInit() {
+
+    // this.rechercheBarre.myControl=this.myControl;
+    // this.rechercheBarre.selectChange=this.selectChange;
+    // this.rechercheBarre.filteredOptions=this.filteredOptions;
     console.log("On init affluence ts");
     this.siteWebList = [""]
     // this.myControl.updateValueAndValidity(this.nothing);
@@ -234,9 +240,18 @@ export class AffluenceComponent implements OnInit {
 
           // console.log(dataSet.data[i]["siteWeb"]);
         }
+        // this.rechercheBarre.siteWebList=this.siteWebList;
+        // this.rechercheBarre._func=this._onClick;
 
       });
   }
+
+
+  public _filter(value: string): string[] {
+    return this.rechercheBarre._filter(value);
+  }
+
+
 
 
   public _onEnter(){
@@ -296,15 +311,15 @@ export class AffluenceComponent implements OnInit {
     )
   }
 
-  private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
+  // private _filter(value: string): string[] {
+  //   const filterValue = value.toLowerCase();
+  //
+  //   return this.siteWebList.filter(siteWebList => siteWebList.toLowerCase().includes(filterValue));
+  // }
 
-    return this.siteWebList.filter(siteWebList => siteWebList.toLowerCase().includes(filterValue));
-  }
 
-
-  nothing() {
-    console.log("nothing");
+  openWindowCustomClass(content: any) {
+    this.modalService.open(content, { windowClass: 'dark-modal' });
   }
 }
 

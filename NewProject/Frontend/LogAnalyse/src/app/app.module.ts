@@ -24,6 +24,7 @@ import 'hammerjs';
 import {ScrollingModule} from "@angular/cdk/scrolling";
 import { VisualisationSiteqComponent } from './visualisation-siteq/visualisation-siteq.component';
 import {MatButtonModule} from "@angular/material/button";
+import { RechercheSiteComponent } from './recherche-site/recherche-site.component';
 
 
 
@@ -34,7 +35,8 @@ import {MatButtonModule} from "@angular/material/button";
     VisualisationComponent,
     CarteComponent,
     AffluenceComponent,
-    VisualisationSiteqComponent
+    VisualisationSiteqComponent,
+    RechercheSiteComponent
 
   ],
     imports: [
