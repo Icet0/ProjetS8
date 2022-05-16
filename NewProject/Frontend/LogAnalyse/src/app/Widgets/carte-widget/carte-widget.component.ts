@@ -7,7 +7,8 @@ import {Loader} from "@googlemaps/js-api-loader";
   styleUrls: ['./carte-widget.component.scss']
 })
 export class CarteWidgetComponent implements OnInit {
-
+  private ip : string  = ""
+  private nb_occur : string = ""
   title = "google-maps"
 
   private map! : google.maps.Map
@@ -33,7 +34,7 @@ export class CarteWidgetComponent implements OnInit {
         zoom: 6
       });
 
-      let label = "0.0.0.15 \n nombre de visite: 4"
+      let label = "Adresse IP :"+this.ip +'<br>'+"nombre de visite: "+this.nb_occur;
       const marker = new google.maps.Marker({
         position: {lat: 48.86, lng: 2.34445},
         map: this.map!,
