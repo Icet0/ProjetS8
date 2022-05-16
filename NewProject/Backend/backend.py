@@ -228,9 +228,13 @@ def visualisation_PageSite():
       except KeyError:
         print("KeyError lol")
         myUrl = '*'
-      
+      if(request.method == "GET"):
+        url = request.args.get("url")
+        search=request.args.get("recherche")
+      else:
+        url = request.form.get('url')
       # data = [{"lol":1,"cocorico":"ZARBI"},{"lol":2,"cocorico":"WTF"}] #exemple de la forme de donnée à retourner
-      infoPage = getSiteInfos(getallTAB(),"saint-leu-974.ville.mygaloo.fr").to_dict(orient = 'records')
+      infoPage = getSiteInfos(getallTAB(),url).to_dict(orient = 'records')
       de = {"status":"OK",
              "data":infoPage}
       response = jsonify(de)
