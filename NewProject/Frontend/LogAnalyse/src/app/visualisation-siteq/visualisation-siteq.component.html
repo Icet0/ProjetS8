@@ -1,5 +1,6 @@
 <div class="mesBlocs">
-  <div>
+  <div >
+
     <div class="chart">
       <canvas baseChart
               [data]="pieChartData"
@@ -17,4 +18,31 @@
   <button mat-button mat-raised-button color="primary" (click)="addSlice()">Add Slice</button>
   <button mat-button mat-raised-button color="primary" (click)="removeSlice()">Remove Slice</button>
   <button mat-button mat-raised-button color="primary" (click)="changeLegendPosition()">Change Legend Position</button>
+</div>
+
+
+<div class="mesBlocs">
+
+  <div class="example-form">
+    <mat-form-field class="example-full-width" appearance="fill">
+      <mat-label>Site Web</mat-label>
+
+      <input
+        type="textarea"
+        placeholder="Pick one"
+        aria-label="Number"
+        matInput
+        [formControl]="myControl"
+        [matAutocomplete]="auto"
+        (keydown.enter)="_onEnter()"
+        (click)="_onClick()">
+
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let site of filteredOptions | async" [value]="site" (onSelectionChange)="_onClick()">
+          {{site}}
+        </mat-option>
+      </mat-autocomplete>
+
+    </mat-form-field>
+  </div>
 </div>
