@@ -22,11 +22,11 @@ export class CarteWidgetComponent implements OnInit {
 
     loader.load().then(() => {
 
-      const center: google.maps.LatLngLiteral = {lat: 30, lng: -110};
+      const center: google.maps.LatLngLiteral = {lat: 48.86, lng: 2.34445};
 
       this.map = new google.maps.Map(document.getElementById("map") as HTMLElement, {
         center,
-        zoom: 8
+        zoom: 2
       });
 
 
