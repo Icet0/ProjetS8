@@ -45,16 +45,16 @@ def authenticate():
     else:
         login = request.form.get('login')
         pwd=request.form.get('pwd')
-    
+
 
     # headers = {"Content-Type": "application/json; charset=utf-8"}
- 
+
 
     data = {
     "login": login,
     "pwd": pwd,
     }
-    
+
     jsonObject = json.dumps(data)
 
     print(jsonObject)
@@ -95,7 +95,7 @@ def getRequestLogin(request):
         return login
     except:
         return ""
-    
+
 
 def isAuthenticate(func):
     def inner(login):
@@ -115,7 +115,7 @@ def isAuthenticate(func):
         response = jsonify(de)
         return makeRequestHeaders(response)
     return inner
-    
+
 
 
 
@@ -330,9 +330,13 @@ def visualisation_PageSite():
       except KeyError:
         print("KeyError lol")
         myUrl = '*'
-      
+      if(request.method == "GET"):
+        url = request.args.get("url")
+        search=request.args.get("recherche")
+      else:
+        url = request.form.get('url')
       # data = [{"lol":1,"cocorico":"ZARBI"},{"lol":2,"cocorico":"WTF"}] #exemple de la forme de donnée à retourner
-      infoPage = getSiteInfos(getTAB(),"saint-leu-974.ville.mygaloo.fr").to_dict(orient = 'records')
+      infoPage = getSiteInfos(getTAB(),url).to_dict(orient = 'records')
       de = {"status":"OK",
              "data":infoPage}
       response = jsonify(de)

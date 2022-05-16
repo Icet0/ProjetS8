@@ -41,10 +41,18 @@
 
 <div class="mesBlocs">
 
-  <app-recherche-site #RechercheSiteComponent [myControl]="myControl" [filteredOptions]="filteredOptions"
-                      [implRechercheFunctions]="this"  [selectChange]="selectChange"
-  ></app-recherche-site>
-</div>
+  <form class="example-form">
+    <mat-form-field class="example-full-width" appearance="fill">
+      <mat-label>Site Web</mat-label>
+
+      <input
+             type="textarea"
+             placeholder="Pick one"
+             aria-label="Number"
+             matInput
+             [formControl]="myControl"
+             [matAutocomplete]="auto"
+             (keydown.enter)="nothing()">
 
 <ng-template #content let-modal>
   <div class="modal-header">
