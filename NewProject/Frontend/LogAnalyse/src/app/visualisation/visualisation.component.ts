@@ -38,7 +38,7 @@ export class VisualisationComponent implements OnInit {
 
   ngOnInit(): void {
     console.log("On init visualisation ts");
-    this.service.sendMessage("/json", {}).subscribe(
+    this.service.sendMessage("/json", {login:"paul"}).subscribe(//TROUVER LA SOLUTION POUR SAUVEGARDER UN TOKEN DE SESSION
       (dataSet) => {
         console.log(dataSet.data);
         this.dataSource.data = dataSet.data;

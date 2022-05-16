@@ -24,7 +24,7 @@
       </table>
       <div class="button-row">
         <button mat-button mat-raised-button color="primary" (click)="changeAbscisse()">Change to {{abscisse}}</button>
-        <button mat-button mat-raised-button color="primary" (click)="pushOne()">Add</button>
+<!--        <button mat-button mat-raised-button color="primary" (click)="pushOne(content)">Add</button>-->
         <button mat-button mat-raised-button color="primary" (click)="changeColor()">Recolor</button>
 <!--        <button mat-button mat-raised-button color="primary" (click)="hideOne()">Hide One</button>-->
         <button mat-button mat-raised-button color="primary" (click)="randomize()">Randomize</button>
@@ -39,31 +39,44 @@
 
 
 
-
 <div class="mesBlocs">
 
-  <div class="example-form">
-    <mat-form-field class="example-full-width" appearance="fill">
-      <mat-label>Site Web</mat-label>
+<!--  <div class="example-form">-->
+<!--    <mat-form-field class="example-full-width" appearance="fill">-->
+<!--      <mat-label>Site Web</mat-label>-->
 
-      <input
-             type="textarea"
-             placeholder="Pick one"
-             aria-label="Number"
-             matInput
+<!--      <input-->
+<!--             type="textarea"-->
+<!--             placeholder="Pick one"-->
+<!--             aria-label="Number"-->
+<!--             matInput-->
 
-             [formControl]="myControl"
-             [matAutocomplete]="auto"
-             (keydown.enter)="_onEnter()"
-      >
+<!--             [formControl]="myControl"-->
+<!--             [matAutocomplete]="auto"-->
+<!--             (keydown.enter)="_onEnter()"-->
+<!--      >-->
 
-      <mat-autocomplete #auto="matAutocomplete">
-        <mat-option *ngFor="let site of filteredOptions | async" [value]="site" (onSelectionChange)="_onClick()">
-          {{site}}
-        </mat-option>
-      </mat-autocomplete>
+<!--      <mat-autocomplete #auto="matAutocomplete">-->
+<!--        <mat-option *ngFor="let site of filteredOptions | async" [value]="site" (onSelectionChange)="_onClick()">-->
+<!--          {{site}}-->
+<!--        </mat-option>-->
+<!--      </mat-autocomplete>-->
 
-    </mat-form-field>
-  </div>
+<!--    </mat-form-field>-->
+<!--  </div>-->
+
+  <app-recherche-site #RechercheSiteComponent [myControl]="myControl" [filteredOptions]="filteredOptions" [_func]="_onClick"  [selectChange]="selectChange" ></app-recherche-site>
 </div>
 
+<!--<ng-template #content let-modal>-->
+<!--  <div class="modal-header">-->
+<!--    <h4 class="modal-title">Modal title</h4>-->
+<!--    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>-->
+<!--  </div>-->
+<!--  <div class="modal-body">-->
+<!--    <p>One fine body&hellip;</p>-->
+<!--  </div>-->
+<!--  <div class="modal-footer">-->
+<!--    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>-->
+<!--  </div>-->
+<!--</ng-template>-->

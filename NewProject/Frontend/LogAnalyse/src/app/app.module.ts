@@ -25,6 +25,7 @@ import { VisualisationSiteqComponent } from './visualisation-siteq/visualisation
 import {MatButtonModule} from "@angular/material/button";
 import { CarteWidgetComponent } from './Widgets/carte-widget/carte-widget.component';
 import { CarteViewComponent } from './Views/carte-view/carte-view.component';
+import { RechercheSiteComponent } from './recherche-site/recherche-site.component';
 
 
 
@@ -37,6 +38,8 @@ import { CarteViewComponent } from './Views/carte-view/carte-view.component';
     VisualisationSiteqComponent,
     CarteWidgetComponent,
     CarteViewComponent
+    VisualisationSiteqComponent,
+    RechercheSiteComponent
 
   ],
     imports: [
