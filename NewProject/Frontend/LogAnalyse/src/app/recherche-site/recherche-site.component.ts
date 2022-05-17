@@ -32,10 +32,7 @@ export class RechercheSiteComponent implements OnInit, OnChanges{
     console.log("ON init recherche site component");
     // this._func= new Function();
     console.log(this.siteWebList);
-    this.filteredOptions = this.myControl.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter(value)),
-    );
+
   }
 
   public _onClick(){
