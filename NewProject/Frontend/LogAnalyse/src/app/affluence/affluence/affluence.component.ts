@@ -34,7 +34,7 @@ export class AffluenceComponent implements OnInit,ImplRecherche {
                             ,"19h","20h","21h","22h","23h"];
 
   @ViewChild('RechercheSiteComponent') rechercheBarre! : RechercheSiteComponent;
-
+  loading = false;
 
 
   public lineChartData: ChartConfiguration['data'] = {
@@ -214,14 +214,17 @@ export class AffluenceComponent implements OnInit,ImplRecherche {
 
   }
   ngAfterViewInit() {
-    this.rechercheBarre.myControl=this.myControl;
-    this.rechercheBarre.selectChange=this.selectChange;
-    this.rechercheBarre.filteredOptions=this.filteredOptions;
-    this.rechercheBarre.siteWebList = this.siteWebList;
+    Promise.resolve().then(() => this.loading=false);
+    if(this.loading==false){
+      this.rechercheBarre.myControl=this.myControl;
+      this.rechercheBarre.selectChange=this.selectChange;
+      this.rechercheBarre.filteredOptions=this.filteredOptions;
+      this.rechercheBarre.siteWebList = this.siteWebList;
+    }
   }
 
   ngOnInit() {
-
+    this.loading = false;
 
     console.log("On init affluence ts");
     this.siteWebList = [""]
@@ -314,12 +317,6 @@ export class AffluenceComponent implements OnInit,ImplRecherche {
 
     return this.siteWebList.filter(siteWebList => siteWebList.toLowerCase().includes(filterValue));
   }
-
-
-  openWindowCustomClass(content: any) {
-    this.modalService.open(content, { windowClass: 'dark-modal' });
-  }
-
   _funcDeclancherOnClick(): void {
     this._onClick();
   }
@@ -327,6 +324,14 @@ export class AffluenceComponent implements OnInit,ImplRecherche {
   _funcDeclancherOnEnter(): void {
     this._onEnter();
   }
+
+
+
+  openWindowCustomClass(content: any) {
+    this.modalService.open(content, { windowClass: 'dark-modal' });
+  }
+
+
 }
 
 
