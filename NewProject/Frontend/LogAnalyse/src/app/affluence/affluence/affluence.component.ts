@@ -34,6 +34,8 @@ export class AffluenceComponent implements OnInit,ImplRecherche {
                             ,"19h","20h","21h","22h","23h"];
 
   @ViewChild('RechercheSiteComponent') rechercheBarre! : RechercheSiteComponent;
+  @ViewChild('RechercheSiteComponentAdd') rechercheBarreAdd! : RechercheSiteComponent;
+
   loading = false;
 
 
@@ -159,7 +161,20 @@ export class AffluenceComponent implements OnInit,ImplRecherche {
     console.log(event, active);
   }
 
-
+  public addOne(data:any):void{
+    let dataSet =  {
+        data: [28, 48, 40, 19, 86, 27, 90],
+        label: 'Series B',
+        backgroundColor: 'rgba(77,83,96,0.2)',
+        borderColor: 'rgba(77,83,96,1)',
+        pointBackgroundColor: 'rgba(77,83,96,1)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgba(77,83,96,1)',
+        fill: 'origin',
+      }
+    this.lineChartData.datasets.push(dataSet);
+  }
 
   public pushOne(content:any): void {
     this.openWindowCustomClass(content);
@@ -220,6 +235,11 @@ export class AffluenceComponent implements OnInit,ImplRecherche {
       this.rechercheBarre.selectChange=this.selectChange;
       this.rechercheBarre.filteredOptions=this.filteredOptions;
       this.rechercheBarre.siteWebList = this.siteWebList;
+
+      // this.rechercheBarreAdd.myControl=this.myControl;
+      // this.rechercheBarreAdd.selectChange=this.selectChange;
+      // this.rechercheBarreAdd.filteredOptions=this.filteredOptions;
+      // this.rechercheBarreAdd.siteWebList = this.siteWebList;
     }
   }
 
@@ -307,6 +327,7 @@ export class AffluenceComponent implements OnInit,ImplRecherche {
             this.lineChartData.datasets[0].data[i-1] = 0;
           }
         }
+        this.myControl.setValue('');
         this.chart?.update();
       }
     )
