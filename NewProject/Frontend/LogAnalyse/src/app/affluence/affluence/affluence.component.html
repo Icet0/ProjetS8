@@ -65,7 +65,9 @@
 <!--    </mat-form-field>-->
 <!--  </div>-->
 
-  <app-recherche-site #RechercheSiteComponent [myControl]="myControl" [filteredOptions]="filteredOptions" [_func]="_onClick"  [selectChange]="selectChange" ></app-recherche-site>
+  <app-recherche-site #RechercheSiteComponent [myControl]="myControl" [filteredOptions]="filteredOptions"
+                      [implRechercheFunctions]="this"  [selectChange]="selectChange"
+  ></app-recherche-site>
 </div>
 
 <!--<ng-template #content let-modal>-->

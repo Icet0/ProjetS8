@@ -11,14 +11,14 @@ import {map, startWith} from 'rxjs/operators';
 import {clone} from "chart.js/helpers";
 import {HttpClient} from "@angular/common/http";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {RechercheSiteComponent} from "../../recherche-site/recherche-site.component";
+import {ImplRecherche, RechercheSiteComponent} from "../../recherche-site/recherche-site.component";
 
 @Component({
   selector: 'app-affluence',
   templateUrl: './affluence.component.html',
   styleUrls: ['./affluence.component.scss']
 })
-export class AffluenceComponent implements OnInit {
+export class AffluenceComponent implements OnInit,ImplRecherche {
 
   siteWebList: string[] = ['One', 'Two', 'Three']
   myControl = new FormControl();
@@ -222,9 +222,7 @@ export class AffluenceComponent implements OnInit {
 
   ngOnInit() {
 
-    // this.rechercheBarre.myControl=this.myControl;
-    // this.rechercheBarre.selectChange=this.selectChange;
-    // this.rechercheBarre.filteredOptions=this.filteredOptions;
+
     console.log("On init affluence ts");
     this.siteWebList = [""]
     // this.myControl.updateValueAndValidity(this.nothing);
@@ -247,9 +245,9 @@ export class AffluenceComponent implements OnInit {
   }
 
 
-  public _filter(value: string): string[] {
-    return this.rechercheBarre._filter(value);
-  }
+  // public _filter(value: string): string[] {
+  //   return this.rechercheBarre._filter(value);
+  // }
 
 
 
@@ -311,15 +309,23 @@ export class AffluenceComponent implements OnInit {
     )
   }
 
-  // private _filter(value: string): string[] {
-  //   const filterValue = value.toLowerCase();
-  //
-  //   return this.siteWebList.filter(siteWebList => siteWebList.toLowerCase().includes(filterValue));
-  // }
+  public _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.siteWebList.filter(siteWebList => siteWebList.toLowerCase().includes(filterValue));
+  }
 
 
   openWindowCustomClass(content: any) {
     this.modalService.open(content, { windowClass: 'dark-modal' });
+  }
+
+  _funcDeclancherOnClick(): void {
+    this._onClick();
+  }
+
+  _funcDeclancherOnEnter(): void {
+    this._onEnter();
   }
 }
 
