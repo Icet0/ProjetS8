@@ -3,20 +3,26 @@ import {FormControl, FormGroup} from "@angular/forms";
 import {Observable} from "rxjs";
 import {map, startWith} from "rxjs/operators";
 
+
+export interface ImplRecherche {
+  _funcDeclancherOnClick():void;
+  _funcDeclancherOnEnter():void;
+  _filter(value: string):string[];
+}
+
+
+
 @Component({
   selector: 'app-recherche-site',
   templateUrl: './recherche-site.component.html',
   styleUrls: ['./recherche-site.component.scss']
 })
 export class RechercheSiteComponent implements OnInit, OnChanges{
-
+  @Input() siteWebList!: string[];
   @Input() myControl = new FormControl();
   @Input() filteredOptions!: Observable<string[]>;
   @Input() selectChange: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
-  @Input() siteWebList: string[] = ['One', 'Two', 'Three','Four']
-  @Input() _func!: Function;
-  @Input() _func3!: Function;
-
+  @Input() implRechercheFunctions!: ImplRecherche;
 
   constructor() {
   }
@@ -34,9 +40,8 @@ export class RechercheSiteComponent implements OnInit, OnChanges{
 
   public _onClick(){
     try {
-      this._func();
-      console.log(this._func);
-      console.log(this.siteWebList);
+
+      this.implRechercheFunctions._funcDeclancherOnClick();
       console.log("dans le try onClick");
     }catch (e) {
       console.log("dans recherche site component _Onclick Error",e);
@@ -44,14 +49,24 @@ export class RechercheSiteComponent implements OnInit, OnChanges{
   }
 
 
-  public _onEnter(){}
+  public _onEnter(){
+
+    try {
+
+      this.implRechercheFunctions._funcDeclancherOnEnter();
+      console.log("dans le try onEnter");
+    }catch (e) {
+      console.log("dans recherche site component _onEnter Error",e);
+    }
+  }
 
 
 
   public _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
-
-    return this.siteWebList.filter(siteWebList => siteWebList.toLowerCase().includes(filterValue));
+    //
+    // return this.siteWebList.filter(siteWebList => siteWebList.toLowerCase().includes(filterValue));
+    return this.implRechercheFunctions._filter(value);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
