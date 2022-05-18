@@ -37,7 +37,7 @@ def hello():
 #MAPPING POUR LA CONNEXION AVEC L'API USERS / ANGULAR--------------------------
 
 #On sera router ici si l'utilisateur veut s'identifier ou si il veut acceder e une page qui necessite une auth alors qu'il ne l'est pas
-@app.route("/authenticate")
+@app.route("/authenticate",methods=['GET','POST'])
 def authenticate():
     if(request.method == "GET"):
         login = request.args.get("login")

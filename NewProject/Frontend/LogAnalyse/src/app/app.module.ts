@@ -18,7 +18,7 @@ import {MatSelectModule} from "@angular/material/select";
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatInputModule } from '@angular/material/input';
 import {  } from "@angular/material";
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import 'hammerjs';
 import {ScrollingModule} from "@angular/cdk/scrolling";
@@ -62,6 +62,7 @@ import { RechercheSiteComponent } from './recherche-site/recherche-site.componen
         HammerModule,
         ScrollingModule,
         MatButtonModule,
+        FormsModule,
 
 
     ],

@@ -18,7 +18,6 @@ export class LoginComponent implements OnInit {
   }
 
   submitRegister(){
-    console.log("in submitRegister ");
     this.router.navigateByUrl("/register");
   }
 
@@ -33,10 +32,11 @@ export class LoginComponent implements OnInit {
     else{
       this.errorMessage = "";
     }
-    let tmp = {username:this.login,password:this.password};
-    this.message.sendMessage("/authentification",tmp).subscribe(
+    let tmp = {login:this.login,pwd:this.password};
+    this.message.sendMessage("/authenticate",tmp).subscribe(
       (phpData)=>{
-        if(phpData.status == 'OK'){
+        console.log(phpData);
+        if(phpData.data){
           console.log('données : '+phpData.data['login']);
           this.router.navigateByUrl('/');
         }
