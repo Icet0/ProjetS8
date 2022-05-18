@@ -45,10 +45,8 @@ def authenticate():
     else:
         login = request.form.get('login')
         pwd=request.form.get('pwd')
-    
 
     # headers = {"Content-Type": "application/json; charset=utf-8"}
- 
 
     data = {
     "login": login,
