@@ -3,6 +3,9 @@ import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MessageService} from "../message/message.service";
+import {FormControl} from "@angular/forms";
+import {Observable} from "rxjs";
+import {map, startWith} from 'rxjs/operators';
 
 
 export interface Tmp {//pour le test
@@ -14,6 +17,7 @@ export interface DataSetSite{
   nb_occur: string
 
 }
+
 @Component({
   selector: 'app-visualisation-siteq',
   templateUrl: './visualisation-siteq.component.html',
@@ -21,8 +25,10 @@ export interface DataSetSite{
 })
 export class VisualisationSiteqComponent implements OnInit {
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
-
-
+  myControl = new FormControl();
+  filteredOptions!: Observable<string[]>;
+  lastSiteUrlChoice:string = "";
+  siteWebList: string[] = ['One', 'Two', 'Three']
   constructor(private service:MessageService) { }
   /// Pie
   public pieChartOptions: ChartConfiguration['options'] = {
@@ -107,8 +113,31 @@ export class VisualisationSiteqComponent implements OnInit {
     this.chart?.render();
   }
   ngOnInit(): void {
+    console.log("On init affluence ts");
+    this.siteWebList = [""]
+    this.service.sendMessage("/topSite", {}).subscribe(
+      (dataSet) => {
+        this.filteredOptions = this.myControl.valueChanges.pipe(
+          startWith(''),
+          map(value => this._filter(value)),
+        );
+        for (let i in dataSet.data) {
+          let siteName: string = dataSet.data[i]["VisitedSite"].toString()
+          this.siteWebList.push(siteName)
+          // console.log(dataSet.data[i]["siteWeb"]);
+        }
+      });
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.siteWebList.filter(siteWebList => siteWebList.toLowerCase().includes(filterValue));
+  }
+  public _onClickPage(url:string){
+    console.log("On click");
     console.log("On init visualisation ts");
-    this.service.sendMessage("/pageSite", {}).subscribe(
+    this.service.sendMessage("/pageSite", {url:url}).subscribe(
       (DataSetSite) => {
         console.log(DataSetSite.data);
         for(const info in DataSetSite.data ){
@@ -121,5 +150,39 @@ export class VisualisationSiteqComponent implements OnInit {
       });
   }
 
+  public _onClick(){
+    this.pieChartData.datasets = [ {
+      data: [  ]
+    } ];
+    this.pieChartData.labels = [ ];
+    console.log("On click");
+    this.myControl.valueChanges.subscribe(
+      (elem) => {
+        console.log("in suscribe");
+        console.log(elem);//ELEM EST LE SITE WEB CLIQUE
+        if(this.lastSiteUrlChoice != elem && elem.length > 0){
+          console.log("nouveau site url");
+          this.lastSiteUrlChoice = elem;
+          //On lance la recherche sur l'API
+          this._onClickPage(elem)
+        }
+      }
+    );
+  }
+
+  public _onEnter(){
+    console.log("On enter");
+    console.log(this.myControl.value);
+    let elem = this.myControl.value;
+    if(this.lastSiteUrlChoice != elem && elem.length > 0){
+      console.log("nouveau site url");
+      this.lastSiteUrlChoice = elem;
+      //On lance la recherche sur l'API
+      this._onClickPage(elem)
+    }
+  }
+  nothing() {
+    console.log("nothing");
+  }
 
 }
