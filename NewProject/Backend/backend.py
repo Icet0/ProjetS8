@@ -1,12 +1,16 @@
 from asyncio.windows_events import NULL
 from concurrent.futures import thread
 from distutils.log import error
+from urllib import response
 from flask import Flask,render_template,request,jsonify,redirect, url_for,Response,stream_with_context
 import json
 import pandas as pd
 from flask import make_response
 import gzip
 import os
+import requests
+
+
 
 
 
@@ -16,23 +20,121 @@ def create_app():
 
 app = create_app()
 
+def __init__():
+  os.environ["USERMODEL_PATH"] = "http://127.0.0.1:"
+  os.environ["USERMODEL_PORT"] = "5050"
 
 
-@app.route("/")
+@app.route("/",methods=['GET','POST'])
 def hello():
-    # print("getenv : "+str(os.getenv("My Environment")))
-    return 'Hello, World!'
+    login = getRequestLogin(request)
+    @isAuthenticate
+    def inside_hello(login):
+        return 'Hello, World!'
+    return inside_hello(login)
 
 
+#MAPPING POUR LA CONNEXION AVEC L'API USERS / ANGULAR--------------------------
+
+#On sera router ici si l'utilisateur veut s'identifier ou si il veut acceder e une page qui necessite une auth alors qu'il ne l'est pas
+@app.route("/authenticate")
+def authenticate():
+    if(request.method == "GET"):
+        login = request.args.get("login")
+        pwd=request.args.get("pwd")
+    else:
+        login = request.form.get('login')
+        pwd=request.form.get('pwd')
+    
+
+    # headers = {"Content-Type": "application/json; charset=utf-8"}
+ 
+
+    data = {
+    "login": login,
+    "pwd": pwd,
+    }
+    
+    jsonObject = json.dumps(data)
+
+    print(jsonObject)
+    res = requests.post(os.getenv("USERMODEL_PATH")+os.getenv("USERMODEL_PORT")+"/authentification", json=jsonObject)
+    if(res.status_code==200):
+        if(res.json()["status"]=="OK"):
+          print("status ok")
+        else:
+          print("status error")
+        if(res.json()["data"]):
+          print(res.json()["data"])
+          status="OK"
+        else:
+          print(res.json()["data"])
+          status=res.json()["status"]
+          # retourne rien car pas connecte
+        de = {"status":status,
+              "data":res.json()["data"]}
+        response = jsonify(de)
+        return makeRequestHeaders(response)
+    else:
+        de = {"status":res.status_code,
+              "data":""}
+        response = jsonify(de)
+        return makeRequestHeaders(response)
+
+
+#------------------------------------------------------------------------------
+
+#FONCTIONS DE REQUETTES VERS L'API USERS---------------------------------------
+
+def getRequestLogin(request):
+    try:
+        if(request.method == "GET"):
+            login = request.args.get("login")
+        else:
+            login = request.form.get('login')
+        return login
+    except:
+        return ""
+    
+
+def isAuthenticate(func):
+    def inner(login):
+      res = requests.get(os.getenv("USERMODEL_PATH")+os.getenv("USERMODEL_PORT")+"/isAuth")
+      if(res.json()["status"]=="OK"):
+        print("status ok")
+      else:
+        print("status error")
+      if(login == res.json()["data"]):
+        print(login)
+        # retourne la fonction appelee a la base
+        return func(login)
+      else:
+        # retourne rien car pas connecte
+        de = {"status":"non auth",
+             "data":None}
+        response = jsonify(de)
+        return makeRequestHeaders(response)
+    return inner
+    
+
+
+
+#------------------------------------------------------------------------------
+
+#MAPPING-----------------------------------------------------------------------
 
 @app.route("/json",methods=['POST','GET'])
-def visualisation():
-      # data = [{"lol":1,"cocorico":"ZARBI"},{"lol":2,"cocorico":"WTF"}] #exemple de la forme de donnée à retourner
-      data = getTAB().to_dict(orient = 'records')
-      de = {"status":"OK",
-             "data":data}
-      response = jsonify(de)
-      return makeRequestHeaders(response)
+def visualisation_rooting():
+    login = getRequestLogin(request)
+    @isAuthenticate
+    def visualisation(login):
+          # data = [{"lol":1,"cocorico":"ZARBI"},{"lol":2,"cocorico":"WTF"}] #exemple de la forme de donnée à retourner
+          data = getTAB().to_dict(orient = 'records')
+          de = {"status":"OK",
+                "data":data}
+          response = jsonify(de)
+          return makeRequestHeaders(response)
+    return visualisation(login)
     
 
 @app.route("/tryAll",methods=['POST','GET'])
@@ -328,4 +430,5 @@ def groupByHeurs(df):
     return df
 
 if __name__ == "__main__":
-     app.run(debug=True)
+    __init__()
+    app.run(debug=True)

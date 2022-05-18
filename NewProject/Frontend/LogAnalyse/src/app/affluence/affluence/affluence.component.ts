@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {ChartConfiguration, ChartDataset, ChartEvent, ChartType} from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import annotationPlugin from 'chartjs-plugin-annotation';
@@ -8,17 +8,18 @@ import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, 
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 
-import {CollectionViewer, DataSource} from '@angular/cdk/collections';
-import {ChangeDetectionStrategy} from '@angular/core';
-import {BehaviorSubject, Subscription} from 'rxjs';
 import {clone} from "chart.js/helpers";
+import {HttpClient} from "@angular/common/http";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {ImplRecherche, RechercheSiteComponent} from "../../recherche-site/recherche-site.component";
+import {copyArrayItem} from "@angular/cdk/drag-drop";
 
 @Component({
   selector: 'app-affluence',
   templateUrl: './affluence.component.html',
   styleUrls: ['./affluence.component.scss']
 })
-export class AffluenceComponent implements OnInit {
+export class AffluenceComponent implements OnInit,ImplRecherche {
 
   siteWebList: string[] = ['One', 'Two', 'Three']
   myControl = new FormControl();
@@ -30,17 +31,22 @@ export class AffluenceComponent implements OnInit {
   cptLabels = 12;
   abscisse: String = "hours";
   _labelsMonths:String[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July','August','October','September','November','December'];
-  _labelsHours:String[] =  ["01h","02h","03h","04h","05h","06h","07h","08h","09h","10h","11h","12h","13h","14h","15h","16h","17h","18h"
+  _labelsHours:String[] =  ["00h","01h","02h","03h","04h","05h","06h","07h","08h","09h","10h","11h","12h","13h","14h","15h","16h","17h","18h"
                             ,"19h","20h","21h","22h","23h"];
 
+  @ViewChild('RechercheSiteComponent') rechercheBarre! : RechercheSiteComponent;
+  @ViewChild('RechercheSiteComponentAdd') rechercheBarreAdd! : RechercheSiteComponent;
 
+  loading = false;
+  addSite = false;
+  cptSite = 0;
 
 
   public lineChartData: ChartConfiguration['data'] = {
     datasets: [
       {
         data: [10, 20, 30, 40, 50, 60, 70,80,90,100,110,120],
-        label: 'Consultations',
+        label: 'SiteWeb',
         backgroundColor: 'rgba(148,159,177,0.2)',
         borderColor: 'rgba(148,159,177,1)',
         pointBackgroundColor: 'rgba(148,159,177,1)',
@@ -140,11 +146,11 @@ export class AffluenceComponent implements OnInit {
     return Math.floor((Math.random() * (i < 2 ? 100 : 1000)) + 1);
   }
 
-  public randomize(): void {
-    for (let i = 0; i < this.lineChartData.datasets.length; i++) {
-      for (let j = 0; j < this.lineChartData.datasets[i].data.length; j++) {
-        this.lineChartData.datasets[i].data[j] = AffluenceComponent.generateNumber(i);
-      }
+  public reset(): void {
+    for (let i = 0; i < this.lineChartData.datasets.length-1; i++) {
+      this.lineChartData.datasets.pop()
+      this.cptSite-=1;
+
     }
     this.chart?.update();
   }
@@ -158,15 +164,25 @@ export class AffluenceComponent implements OnInit {
     console.log(event, active);
   }
 
+  public addOne(data:any):void{
+    let dataSet =  {
+        data: data,
+        label: 'Series B',
+        backgroundColor: 'rgba(77,83,96,0.2)',
+        borderColor: 'rgba(77,83,96,1)',
+        pointBackgroundColor: 'rgba(77,83,96,1)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgba(77,83,96,1)',
+        fill: 'origin',
+      }
+    this.cptSite+=1;
+    this.lineChartData.datasets.push(data);
+    this.changeColor();
+  }
 
-
-  public pushOne(): void {
-    this.lineChartData.datasets.forEach((x, i) => {
-      const num = AffluenceComponent.generateNumber(i);
-      x.data.push(num);
-    });
-    this.lineChartData?.labels?.push(`Label ${this.lineChartData.labels.length}`);
-
+  public pushOne(content:any): void {
+    this.openWindowCustomClass(content);
     this.chart?.update();
   }
 
@@ -195,7 +211,16 @@ export class AffluenceComponent implements OnInit {
 
   public changeAbscisse(): void {
     if(this.lastSiteUrlChoice.length > 0) {
-      this.searchSite(this.lastSiteUrlChoice, this.abscisse == "hours" ? "hours" : "months");
+      let cptSave = this.cptSite;
+      for(let i = 0; i < this.lineChartData.datasets.length;i++){
+        let url = typeof (this.lineChartData.datasets[i].label) == "string" ? this.lineChartData.datasets[i].label : '';
+        console.log("searchSIte de ",url," avec un cpt site = ",this.cptSite);
+        this.searchSite(url!, this.abscisse == "hours" ? "hours" : "months",this.cptSite);
+        this.cptSite-=1;
+
+      }
+      this.cptSite=cptSave;
+
       let len = this.chart?.data?.labels?.length;
       console.log("len : "+len);
       for (let i = 0; i < len!; i++){
@@ -214,15 +239,30 @@ export class AffluenceComponent implements OnInit {
   }
 
 
-  constructor(private service: MessageService) {
+  constructor(private service: MessageService,private rooting: HttpClient,private modalService: NgbModal, ) {
 
+  }
+  ngAfterViewInit() {
+    Promise.resolve().then(() => this.loading=false);
+    if(this.loading==false){
+      this.rechercheBarre.myControl=this.myControl;
+      this.rechercheBarre.selectChange=this.selectChange;
+      this.rechercheBarre.filteredOptions=this.filteredOptions;
+      this.rechercheBarre.siteWebList = this.siteWebList;
 
+      // this.rechercheBarreAdd.myControl=this.myControl;
+      // this.rechercheBarreAdd.selectChange=this.selectChange;
+      // this.rechercheBarreAdd.filteredOptions=this.filteredOptions;
+      // this.rechercheBarreAdd.siteWebList = this.siteWebList;
+    }
   }
 
   ngOnInit() {
+    this.loading = false;
+
     console.log("On init affluence ts");
     this.siteWebList = [""]
-
+    // this.myControl.updateValueAndValidity(this.nothing);
     this.service.sendMessage("/topSite", {}).subscribe(
       (dataSet) => {
         this.filteredOptions = this.myControl.valueChanges.pipe(
@@ -235,12 +275,35 @@ export class AffluenceComponent implements OnInit {
 
           // console.log(dataSet.data[i]["siteWeb"]);
         }
+        // this.rechercheBarre.siteWebList=this.siteWebList;
+        // this.rechercheBarre._func=this._onClick;
 
       });
   }
 
+
+  // public _filter(value: string): string[] {
+  //   return this.rechercheBarre._filter(value);
+  // }
+
+
+
+
+  public _onEnter(){
+    console.log("On enter");
+    console.log(this.myControl.value);
+    let elem = this.myControl.value;
+    if(this.lastSiteUrlChoice != elem && elem.length > 0){
+      console.log("nouveau site url");
+      this.lastSiteUrlChoice = elem;
+      //On lance la recherche sur l'API
+      this.searchSite(elem,this.abscisse=="hours"?"months":"hours",this.cptSite);
+    }
+  }
+
   public _onClick(){
     console.log("On click");
+    console.log(this.myControl.value);
     this.myControl.valueChanges.subscribe(
       (elem) => {
         console.log("in suscribe");
@@ -249,50 +312,87 @@ export class AffluenceComponent implements OnInit {
           console.log("nouveau site url");
           this.lastSiteUrlChoice = elem;
           //On lance la recherche sur l'API
-          this.searchSite(elem,this.abscisse=="hours"?"months":"hours");
+          this.searchSite(elem,this.abscisse=="hours"?"months":"hours",this.cptSite);
         }
       }
     );
   }
 
-  public searchSite(url:String,recherche:String){
+  public searchSite(url:string,recherche:string,cpt:number){
+    let constAddSite = this.addSite;
     let index = recherche=="months"?"Mois":"H";
     this.service.sendMessage("/searchSite",{url:url,recherche:recherche}).subscribe(
       (data) => {
-        console.log("Dans lel subscribe du /searchSite")
-        console.log(data);
-        //DANS LE SUSCRIBE POUR RELOAD LE GRAPH
-        let valid = true;
-        for(let i = 0; i <= (this.abscisse=="months"?this._labelsMonths.length:this._labelsHours.length); i++) {
-          valid = false;
-          for (let j = 0; j < data.data.length; j++) {
-            // console.log(data.data[j][index]);
-            if (data.data[j][index] == i) {
-              // console.log("count = " + data.data[j]['count']);
-              this.lineChartData.datasets[0].data[i-1] = data.data[j]['count'];
-              valid = true;
-              break;
+        console.log(data.data.length);
+        if (data.data.length > 0) {
+          console.log("Dans lel subscribe du /searchSite ",cpt);
+          console.log(data);
+          //DANS LE SUSCRIBE POUR RELOAD LE GRAPH
+          let valid = true;
+          let datasetClone = clone(this.lineChartData.datasets[this.cptSite]);
+
+          for (let i = 0; i <= (this.abscisse == "months" ? this._labelsHours.length : this._labelsMonths.length); i++) {
+            valid = false;
+            let valIndex = index=="Mois"?i-1:i;
+            for (let j = 0; j < data.data.length; j++) {
+              // console.log(data.data[j][index]);
+              if (data.data[j][index] == i) {
+                if (constAddSite) {
+                  datasetClone.data[valIndex] = data.data[j]['count'];
+                } else {
+                  this.lineChartData.datasets[cpt].data[valIndex] = data.data[j]['count'];
+                }
+                valid = true;
+                break;
+              }
+            }
+            //                this.addOne(data.data);
+            if (!valid) {
+              if (constAddSite) {
+                datasetClone.data[valIndex] = 0;
+              } else {
+                this.lineChartData.datasets[cpt].data[valIndex] = 0;
+              }
             }
           }
-          if(!valid){
-            this.lineChartData.datasets[0].data[i-1] = 0;
+          if (constAddSite) {
+            this.addOne(datasetClone);
           }
+          this.lineChartData.datasets[cpt].label = url;
+          this.myControl.setValue('');
+          this.chart?.update();
         }
-        this.chart?.update();
       }
     )
   }
 
-  private _filter(value: string): string[] {
+  public _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
-
+    if(this.modalService.hasOpenModals()){
+      this.addSite=true;
+    }else {
+      this.addSite=false;
+    }
+    console.log(this.addSite);
     return this.siteWebList.filter(siteWebList => siteWebList.toLowerCase().includes(filterValue));
   }
-
-
-  nothing() {
-    console.log("nothing");
+  _funcDeclancherOnClick(): void {
+    this._onClick();
   }
+
+  _funcDeclancherOnEnter(): void {
+    this._onEnter();
+  }
+
+
+
+  openWindowCustomClass(content: any) {
+    this.modalService.open(content, { windowClass: 'dark-modal' });
+    this.addSite=true;
+
+  }
+
+
 }
 
 
