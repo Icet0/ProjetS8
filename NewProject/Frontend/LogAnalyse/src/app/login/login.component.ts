@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {MessageService} from "../message/message.service";
+import {CookieService} from "ngx-cookie-service";
 
 @Component({
   selector: 'app-login',
@@ -12,9 +13,10 @@ export class LoginComponent implements OnInit {
   login= "" ;
   password="";
   errorMessage="";
-  constructor(private http:HttpClient,private message:MessageService,private router:Router) { }
+  constructor(private http:HttpClient,private message:MessageService,private router:Router,private cookie:CookieService) { }
 
   ngOnInit(): void {
+
   }
 
   submitRegister(){
@@ -38,6 +40,7 @@ export class LoginComponent implements OnInit {
         console.log(phpData);
         if(phpData.data){
           console.log('données : '+phpData.data['login']);
+          this.cookie.set("loginCookie",phpData.data['login']);
           this.router.navigateByUrl('/');
         }
         else {
