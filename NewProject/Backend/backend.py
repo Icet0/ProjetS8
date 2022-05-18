@@ -25,7 +25,7 @@ def __init__():
   os.environ["USERMODEL_PORT"] = "5050"
 
 
-@app.route("/")
+@app.route("/",methods=['GET','POST'])
 def hello():
     login = getRequestLogin(request)
     @isAuthenticate
