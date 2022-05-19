@@ -3,6 +3,8 @@ import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
 import {MessageService} from "../message/message.service";
+import {EnvServiceService} from "../env/env-service.service";
+import {CookieService} from "ngx-cookie-service";
 
 
 export interface Tmp {//pour le test
@@ -24,7 +26,7 @@ export interface DataSet{
 @Component({
   selector: 'app-visualisation',
   templateUrl: './visualisation.component.html',
-  styleUrls: ['./visualisation.component.scss']
+  styleUrls: ['./visualisation.component.scss'],
 })
 export class VisualisationComponent implements OnInit {
 
@@ -34,11 +36,15 @@ export class VisualisationComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
 
 
-  constructor(private service:MessageService) { }
+  constructor(private service:MessageService,private k:CookieService) {
+    this.k = k;
+  }
 
   ngOnInit(): void {
     console.log("On init visualisation ts");
-    this.service.sendMessage("/json", {}).subscribe(//TROUVER LA SOLUTION POUR SAUVEGARDER UN TOKEN DE SESSION
+    console.log("visuCompo envLogin : ",this.k.get("loginCookie"));
+
+    this.service.sendMessage("/json", {"loginCookie":this.k.get("loginCookie")}).subscribe(//TROUVER LA SOLUTION POUR SAUVEGARDER UN TOKEN DE SESSION
       (dataSet) => {
         console.log(dataSet.data);
         this.dataSource.data = dataSet.data;

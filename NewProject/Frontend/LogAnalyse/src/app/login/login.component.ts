@@ -3,17 +3,22 @@ import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {MessageService} from "../message/message.service";
 import {CookieService} from "ngx-cookie-service";
+import {EnvServiceService} from "../env/env-service.service";
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
+
 })
 export class LoginComponent implements OnInit {
   login= "" ;
   password="";
   errorMessage="";
-  constructor(private http:HttpClient,private message:MessageService,private router:Router,private cookie:CookieService) { }
+  loginEnv!:string;
+  constructor(private http:HttpClient,private message:MessageService,private router:Router,private envServiceService:CookieService) {
+    this.envServiceService=envServiceService;
+  }
 
   ngOnInit(): void {
 
@@ -39,8 +44,8 @@ export class LoginComponent implements OnInit {
       (phpData)=>{
         console.log(phpData);
         if(phpData.data){
-          console.log('données : '+phpData.data['login']);
-          this.cookie.set("loginCookie",phpData.data['login']);
+          console.log('données : '+this.login);
+          this.envServiceService.set("loginCookie",this.login);
           this.router.navigateByUrl('/');
         }
         else {

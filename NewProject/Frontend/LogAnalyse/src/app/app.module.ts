@@ -27,7 +27,7 @@ import {MatButtonModule} from "@angular/material/button";
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { RechercheSiteComponent } from './recherche-site/recherche-site.component';
-
+import {EnvServiceService} from "./env/env-service.service";
 
 
 @NgModule({
@@ -66,7 +66,7 @@ import { RechercheSiteComponent } from './recherche-site/recherche-site.componen
 
 
     ],
-  providers: [],
+  providers: [ ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
