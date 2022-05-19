@@ -6,6 +6,7 @@ import {MessageService} from "../message/message.service";
 import {FormControl} from "@angular/forms";
 import {Observable} from "rxjs";
 import {map, startWith} from 'rxjs/operators';
+import {CookieService} from "ngx-cookie-service";
 
 
 export interface Tmp {//pour le test
@@ -29,7 +30,7 @@ export class VisualisationSiteqComponent implements OnInit {
   filteredOptions!: Observable<string[]>;
   lastSiteUrlChoice:string = "";
   siteWebList: string[] = ['One', 'Two', 'Three']
-  constructor(private service:MessageService) { }
+  constructor(private service:MessageService,private cookieService:CookieService) { }
   /// Pie
   public pieChartOptions: ChartConfiguration['options'] = {
     responsive: true,
@@ -115,7 +116,7 @@ export class VisualisationSiteqComponent implements OnInit {
   ngOnInit(): void {
     console.log("On init affluence ts");
     this.siteWebList = [""]
-    this.service.sendMessage("/topSite", {}).subscribe(
+    this.service.sendMessage("/topSite", {"loginCookie":this.cookieService.get("loginCookie")}).subscribe(
       (dataSet) => {
         this.filteredOptions = this.myControl.valueChanges.pipe(
           startWith(''),
@@ -137,7 +138,7 @@ export class VisualisationSiteqComponent implements OnInit {
   public _onClickPage(url:string){
     console.log("On click");
     console.log("On init visualisation ts");
-    this.service.sendMessage("/pageSite", {url:url}).subscribe(
+    this.service.sendMessage("/pageSite", {url:url,"loginCookie":this.cookieService.get("loginCookie")}).subscribe(
       (DataSetSite) => {
         console.log(DataSetSite.data);
         for(const info in DataSetSite.data ){

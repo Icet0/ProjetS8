@@ -27,7 +27,7 @@ def __init__():
 
 @app.route("/",methods=['GET','POST'])
 def hello():
-    login = getRequestLogin(request)
+    login = getRequestLoginCookie(request)
     @isAuthenticate
     def inside_hello(login):
         return 'Hello, World!'
@@ -37,7 +37,7 @@ def hello():
 #MAPPING POUR LA CONNEXION AVEC L'API USERS / ANGULAR--------------------------
 
 #On sera router ici si l'utilisateur veut s'identifier ou si il veut acceder e une page qui necessite une auth alors qu'il ne l'est pas
-@app.route("/authenticate")
+@app.route("/authenticate",methods=['GET','POST'])
 def authenticate():
     if(request.method == "GET"):
         login = request.args.get("login")
@@ -45,10 +45,8 @@ def authenticate():
     else:
         login = request.form.get('login')
         pwd=request.form.get('pwd')
-    
 
     # headers = {"Content-Type": "application/json; charset=utf-8"}
- 
 
     data = {
     "login": login,
@@ -86,12 +84,12 @@ def authenticate():
 
 #FONCTIONS DE REQUETTES VERS L'API USERS---------------------------------------
 
-def getRequestLogin(request):
+def getRequestLoginCookie(request):
     try:
         if(request.method == "GET"):
-            login = request.args.get("login")
+            login = request.args.get("loginCookie")
         else:
-            login = request.form.get('login')
+            login = request.form.get('loginCookie')
         return login
     except:
         return ""
@@ -125,7 +123,7 @@ def isAuthenticate(func):
 
 @app.route("/json",methods=['POST','GET'])
 def visualisation_rooting():
-    login = getRequestLogin(request)
+    login = getRequestLoginCookie(request)
     @isAuthenticate
     def visualisation(login):
           # data = [{"lol":1,"cocorico":"ZARBI"},{"lol":2,"cocorico":"WTF"}] #exemple de la forme de donnée à retourner
