@@ -9,12 +9,14 @@ import {Router} from "@angular/router";
 })
 export class NavbarComponent implements OnInit {
 
-  constructor(private router:Router,private envServiceService:CookieService) { }
+  constructor(private router:Router ,private envServiceService:CookieService) { }
 
   ngOnInit(): void {
   }
   deconnexion(){
+    console.log("Dans deconnexion");
     this.envServiceService.deleteAll();
+    console.log(this.envServiceService.getAll());
     this.router.navigateByUrl('/login');
   }
 }

@@ -16,7 +16,6 @@ export class LoginComponent implements OnInit {
   errorMessage="";
   loginEnv!:string;
   constructor(private http:HttpClient,private message:MessageService,private router:Router,private envServiceService:CookieService) {
-    this.envServiceService=envServiceService;
   }
 
   ngOnInit(): void {
@@ -44,7 +43,7 @@ export class LoginComponent implements OnInit {
         console.log(phpData);
         if(phpData.data){
           console.log('données : '+this.login);
-          this.envServiceService.set("loginCookie",this.login);
+          this.envServiceService.set("loginCookie","");
           this.router.navigateByUrl('/');
         }
         else {
