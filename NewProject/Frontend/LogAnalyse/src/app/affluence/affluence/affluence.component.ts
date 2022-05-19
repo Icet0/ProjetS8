@@ -13,6 +13,7 @@ import {HttpClient} from "@angular/common/http";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {ImplRecherche, RechercheSiteComponent} from "../../recherche-site/recherche-site.component";
 import {copyArrayItem} from "@angular/cdk/drag-drop";
+import {CookieService} from "ngx-cookie-service";
 
 @Component({
   selector: 'app-affluence',
@@ -239,7 +240,7 @@ export class AffluenceComponent implements OnInit,ImplRecherche {
   }
 
 
-  constructor(private service: MessageService,private rooting: HttpClient,private modalService: NgbModal, ) {
+  constructor(private service: MessageService,private rooting: HttpClient,private modalService: NgbModal,private cookieService:CookieService ) {
 
   }
   ngAfterViewInit() {
@@ -263,7 +264,7 @@ export class AffluenceComponent implements OnInit,ImplRecherche {
     console.log("On init affluence ts");
     this.siteWebList = [""]
     // this.myControl.updateValueAndValidity(this.nothing);
-    this.service.sendMessage("/topSite", {}).subscribe(
+    this.service.sendMessage("/topSite", {"loginCookie":this.cookieService.get("loginCookie")}).subscribe(
       (dataSet) => {
         this.filteredOptions = this.myControl.valueChanges.pipe(
           startWith(''),
@@ -321,7 +322,7 @@ export class AffluenceComponent implements OnInit,ImplRecherche {
   public searchSite(url:string,recherche:string,cpt:number){
     let constAddSite = this.addSite;
     let index = recherche=="months"?"Mois":"H";
-    this.service.sendMessage("/searchSite",{url:url,recherche:recherche}).subscribe(
+    this.service.sendMessage("/searchSite",{url:url,recherche:recherche,"loginCookie":this.cookieService.get("loginCookie")}).subscribe(
       (data) => {
         console.log(data.data.length);
         if (data.data.length > 0) {
