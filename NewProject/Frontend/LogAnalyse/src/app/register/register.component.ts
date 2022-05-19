@@ -29,6 +29,9 @@ export class RegisterComponent implements OnInit {
     else if(this.password == ""){
       this.errorMessage = " Veuillez saisir votre mot de passe ";
     }
+    else if(!this.checkPassword()){
+      this.errorMessage = " Veuillez saisir un mot de passe identique ";
+    }
     else{
       this.errorMessage = "";
       let tmp = {login:this.login,pwd:this.password};

@@ -27,6 +27,7 @@ import {MatButtonModule} from "@angular/material/button";
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { RechercheSiteComponent } from './recherche-site/recherche-site.component';
+import { NavbarDecoComponent } from './navbar-deco/navbar-deco.component';
 
 
 @NgModule({
@@ -40,7 +41,8 @@ import { RechercheSiteComponent } from './recherche-site/recherche-site.componen
     RegisterComponent,
     LoginComponent,
     VisualisationSiteqComponent,
-    RechercheSiteComponent
+    RechercheSiteComponent,
+    NavbarDecoComponent
 
   ],
     imports: [

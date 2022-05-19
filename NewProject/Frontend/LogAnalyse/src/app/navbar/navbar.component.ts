@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {CookieService} from "ngx-cookie-service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-navbar',
@@ -7,9 +9,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NavbarComponent implements OnInit {
 
-  constructor() { }
+  constructor(private router:Router,private envServiceService:CookieService) { }
 
   ngOnInit(): void {
   }
-
+  deconnexion(){
+    this.envServiceService.deleteAll();
+    this.router.navigateByUrl('/login');
+  }
 }
