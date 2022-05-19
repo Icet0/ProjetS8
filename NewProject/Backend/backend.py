@@ -95,14 +95,21 @@ def register():
     "pwd": pwd,
     }
     
+    print("data : ",data)
     jsonObject = json.dumps(data)
 
     print(jsonObject)
     
     #REGISTER
     resRegister = requests.post(os.getenv("USERMODEL_PATH")+os.getenv("USERMODEL_PORT")+"/addUser", json=jsonObject)
-    status = resRegister.json["status"]
-    data = resRegister.json["data"]
+    print(resRegister)
+    if(resRegister.status_code==200):
+          status = resRegister.json()["status"]
+          data = resRegister.json()["data"]
+    else:
+          status = resRegister.status_code
+          data = False
+          print("register else")
     de = {"status":status,
           "data":data}
     response = jsonify(de)

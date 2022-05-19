@@ -34,7 +34,7 @@ export class RegisterComponent implements OnInit {
       let tmp = {login:this.login,pwd:this.password};
       this.message.sendMessage("/register",tmp).subscribe(
       (phpData)=>{
-        console.log(phpData);
+        console.log("phpData register subscribe " ,phpData);
         if(phpData.data){
           console.log('données : '+this.login);
           //this.envServiceService.set("loginCookie",this.login);

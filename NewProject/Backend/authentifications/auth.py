@@ -129,22 +129,39 @@ def addUser():
         login = request.args.get("login")
         pwd=request.args.get("pwd")
     else:
-        login = request.form.get('login')
-        pwd=request.form.get('pwd')
+        json_data = json.loads(request.get_json())
+        login =None
+        pwd = None
+        if json_data:
+            if 'login' in json_data:
+                login = json_data['login']
+
+            if 'pwd' in json_data:
+                pwd = json_data['pwd']
+
+    print("login : ",login," pwd : ",pwd)
     msg = authentification(login,pwd)
-    status=msg
+    print("auth login & pwd = ",login,pwd)
+    status=json.loads(msg.data)["status"]
+
+    print("MSG status : ",status)
+    print("try : ",status=="Mauvais Login")
     data=None
-    if(msg=="OK" or msg=="Mauvais Pwd"):
+    if(status=="OK" or status=="Mauvais Pwd"):
         data = False
         status = "User deja existant"
 
-    elif(msg=="error" or msg=="Mauvais Login"):
+    elif(status=="error" or status=="Mauvais Login"):
         json_data = []
         json_d = {'login':login,'pwd':pwd}
-        json_data.append(json_d)
         
+        json_data.append(json_d)
+        print("Json_data ",json_data)
+
+        print("dans le elif")
         d,s = getBDD()
         if(s=="OK"):
+            print("dans le OK")
             d = json.loads(d.to_json(orient="records"))
             for elem in d:
                 json_data.append(elem)
