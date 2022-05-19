@@ -3,14 +3,17 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {DataFormat} from "./DataFormat";
 import {Observable} from "rxjs";
 import {environment} from "../../../environments/environment";
-import {CookieService} from "ngx-cookie-service";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MessageService {
 
-  constructor(private service : HttpClient,private cookie:CookieService) { }
+  loginEnv:string = "";
+
+
+  constructor(private service : HttpClient) {
+  }
 
   sendMessage(Url : string, data : any): Observable<DataFormat>{
 
@@ -19,13 +22,14 @@ export class MessageService {
     console.log(realUrl);
     let retour : Observable<DataFormat> = new Observable<DataFormat>();
     const formData = new FormData();
-    formData.append("loginCookie",this.cookie.get("loginCookie"));
+
     if (data != null && data != undefined) {
       for(const key in data){
         formData.append(key,data[key]);
         console.log("key = "+key+" values = "+data[key]);
       }
     }
+    console.log("Form Data cookie = ",formData.get("loginCookie"));
     retour = this.service.post<DataFormat>(realUrl,formData,{withCredentials:true });
     return retour;
   }

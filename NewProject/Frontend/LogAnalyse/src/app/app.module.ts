@@ -28,7 +28,7 @@ import { LoginComponent } from './login/login.component';
 import { CarteWidgetComponent } from './Widgets/carte-widget/carte-widget.component';
 import { CarteViewComponent } from './Views/carte-view/carte-view.component';
 import { RechercheSiteComponent } from './recherche-site/recherche-site.component';
-
+import {EnvServiceService} from "./env/env-service.service";
 
 
 @NgModule({
@@ -69,7 +69,7 @@ import { RechercheSiteComponent } from './recherche-site/recherche-site.componen
 
 
     ],
-  providers: [],
+  providers: [ ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
