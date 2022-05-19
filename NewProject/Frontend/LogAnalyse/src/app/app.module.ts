@@ -62,8 +62,6 @@ import { RechercheSiteComponent } from './recherche-site/recherche-site.componen
         ScrollingModule,
         MatButtonModule,
         FormsModule,
-
-
     ],
   providers: [ ],
   bootstrap: [AppComponent]

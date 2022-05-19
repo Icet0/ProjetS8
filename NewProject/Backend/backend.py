@@ -78,6 +78,37 @@ def authenticate():
               "data":""}
         response = jsonify(de)
         return makeRequestHeaders(response)
+      
+      
+#On sera router ici si l'utilisateur veut s'identifier ou si il veut acceder e une page qui necessite une auth alors qu'il ne l'est pas
+@app.route("/register",methods=['GET','POST'])
+def register():
+    if(request.method == "GET"):
+        login = request.args.get("login")
+        pwd=request.args.get("pwd")
+    else:
+        login = request.form.get('login')
+        pwd=request.form.get('pwd')
+
+    data = {
+    "login": login,
+    "pwd": pwd,
+    }
+    
+    jsonObject = json.dumps(data)
+
+    print(jsonObject)
+    
+    #REGISTER
+    resRegister = requests.post(os.getenv("USERMODEL_PATH")+os.getenv("USERMODEL_PORT")+"/authentification", json=jsonObject)
+    status = resRegister.json["status"]
+    data = resRegister.json["data"]
+    de = {"status":status,
+          "data":data}
+    response = jsonify(de)
+    return makeRequestHeaders(response)
+  
+
 
 
 #------------------------------------------------------------------------------
