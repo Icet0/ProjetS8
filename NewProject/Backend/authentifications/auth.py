@@ -123,7 +123,7 @@ def isAuth():
     response = jsonify(de)
     return makeRequestHeaders(response)
 
-@app.route("/addUser")
+@app.route("/addUser",methods=['GET','POST'])
 def addUser():
     if(request.method == "GET"):
         login = request.args.get("login")
