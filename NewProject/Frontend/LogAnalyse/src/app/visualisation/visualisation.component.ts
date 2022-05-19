@@ -3,7 +3,6 @@ import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
 import {MessageService} from "../message/message.service";
-import {EnvServiceService} from "../env/env-service.service";
 import {CookieService} from "ngx-cookie-service";
 
 
@@ -36,15 +35,15 @@ export class VisualisationComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
 
 
-  constructor(private service:MessageService,private k:CookieService) {
-    this.k = k;
+  constructor(private service:MessageService,private cookieService:CookieService) {
+    this.cookieService = cookieService;
   }
 
   ngOnInit(): void {
     console.log("On init visualisation ts");
-    console.log("visuCompo envLogin : ",this.k.get("loginCookie"));
+    console.log("visuCompo envLogin : ",this.cookieService.get("loginCookie"));
 
-    this.service.sendMessage("/json", {"loginCookie":this.k.get("loginCookie")}).subscribe(//TROUVER LA SOLUTION POUR SAUVEGARDER UN TOKEN DE SESSION
+    this.service.sendMessage("/json", {"loginCookie":this.cookieService.get("loginCookie")}).subscribe(//TROUVER LA SOLUTION POUR SAUVEGARDER UN TOKEN DE SESSION
       (dataSet) => {
         console.log(dataSet.data);
         this.dataSource.data = dataSet.data;
