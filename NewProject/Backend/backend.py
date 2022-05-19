@@ -100,7 +100,7 @@ def register():
     print(jsonObject)
     
     #REGISTER
-    resRegister = requests.post(os.getenv("USERMODEL_PATH")+os.getenv("USERMODEL_PORT")+"/authentification", json=jsonObject)
+    resRegister = requests.post(os.getenv("USERMODEL_PATH")+os.getenv("USERMODEL_PORT")+"/addUser", json=jsonObject)
     status = resRegister.json["status"]
     data = resRegister.json["data"]
     de = {"status":status,
