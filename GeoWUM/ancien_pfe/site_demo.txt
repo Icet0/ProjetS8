@@ -1,6 +1,0 @@
-
-http://cazeq.pythonanywhere.com/
-
-identifiant : polytech
-mot de passe : pfe45pz
-
