@@ -212,15 +212,13 @@ export class AffluenceComponent implements OnInit,ImplRecherche {
 
   public changeAbscisse(): void {
     if(this.lastSiteUrlChoice.length > 0) {
-      let cptSave = this.cptSite;
+      this.addSite = false;
       for(let i = 0; i < this.lineChartData.datasets.length;i++){
         let url = typeof (this.lineChartData.datasets[i].label) == "string" ? this.lineChartData.datasets[i].label : '';
-        console.log("searchSIte de ",url," avec un cpt site = ",this.cptSite);
+        console.log("searchSIte de ",url," avec un cpt site = ",i);
         this.searchSite(url!, this.abscisse == "hours" ? "hours" : "months",this.cptSite);
-        this.cptSite-=1;
 
       }
-      this.cptSite=cptSave;
 
       let len = this.chart?.data?.labels?.length;
       console.log("len : "+len);

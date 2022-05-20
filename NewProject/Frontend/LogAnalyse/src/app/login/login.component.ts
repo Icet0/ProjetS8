@@ -12,43 +12,41 @@ import {CookieService} from "ngx-cookie-service";
 
 })
 export class LoginComponent implements OnInit {
-  login= "" ;
-  password="";
-  errorMessage="";
-  loginEnv!:string;
-  constructor(private http:HttpClient,private message:MessageService,private router:Router,private envServiceService:CookieService) {
+  login = "";
+  password = "";
+  errorMessage = "";
+  loginEnv!: string;
+
+  constructor(private http: HttpClient, private message: MessageService, private router: Router, private envServiceService: CookieService) {
   }
 
   ngOnInit(): void {
 
   }
 
-  submitRegister(){
+  submitRegister() {
     this.router.navigateByUrl("/register");
   }
 
 
-  submitLogin():void{
-    if(this.login==""){
-      this.errorMessage= " Veuillez saisir votre login ";
-    }
-    else if(this.password == ""){
+  submitLogin(): void {
+    if (this.login == "") {
+      this.errorMessage = " Veuillez saisir votre login ";
+    } else if (this.password == "") {
       this.errorMessage = " Veuillez saisir votre mot de passe ";
-    }
-    else{
+    } else {
       this.errorMessage = "";
     }
-    let tmp = {login:this.login,pwd:this.password};
-    this.message.sendMessage("/authenticate",tmp).subscribe(
-      (phpData)=>{
+    let tmp = {login: this.login, pwd: this.password};
+    this.message.sendMessage("/authenticate", tmp).subscribe(
+      (phpData) => {
         console.log(phpData);
-        if(phpData.data){
-          console.log('données : '+this.login);
-          this.envServiceService.set("loginCookie",this.login,undefined,"/");
+        if (phpData.data) {
+          console.log('données : ' + this.login);
+          this.envServiceService.set("loginCookie", this.login, undefined, "/");
           this.router.navigateByUrl('/');
-        }
-        else {
-          console.log('données : '+phpData.data['reason']);
+        } else {
+          console.log('données : ' + phpData.data['reason']);
         }
       })
   }
