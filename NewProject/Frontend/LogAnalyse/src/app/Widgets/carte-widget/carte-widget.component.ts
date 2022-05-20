@@ -3,6 +3,9 @@ import {Loader} from "@googlemaps/js-api-loader";
 import {ImplRecherche, RechercheSiteComponent} from "../recherche-site/recherche-site.component";
 import {FormControl, FormGroup} from "@angular/forms";
 import {Observable} from "rxjs";
+import {map, startWith} from "rxjs/operators";
+import {MessageService} from "../../Service/message/message.service";
+import {CookieService} from "ngx-cookie-service";
 
 @Component({
   selector: 'app-carte-widget',
@@ -35,11 +38,10 @@ export class CarteWidgetComponent implements OnInit,ImplRecherche {
 
 
 
-  constructor() { }
+  constructor(private service:MessageService,private cookieService:CookieService) { }
 
   ngOnInit(): void {
 
-    this.loading = false;
 
     let loader = new  Loader(
 
@@ -68,6 +70,31 @@ export class CarteWidgetComponent implements OnInit,ImplRecherche {
         infoWindow.open(this.map!, marker);
       });
     });
+
+    //RECHERCHE BARRE--------------------------------------------
+
+    this.loading = false;
+    this.siteWebList = [""]
+    // this.myControl.updateValueAndValidity(this.nothing);
+    this.service.sendMessage("/topSite", {"loginCookie":this.cookieService.get("loginCookie")}).subscribe(
+      (dataSet) => {
+        this.filteredOptions = this.myControl.valueChanges.pipe(
+          startWith(''),
+          map(value => this._filter(value)),
+        );
+        for (let i in dataSet.data) {
+          let siteName: string = dataSet.data[i]["VisitedSite"].toString()
+          this.siteWebList.push(siteName)
+
+          // console.log(dataSet.data[i]["siteWeb"]);
+        }
+        // this.rechercheBarre.siteWebList=this.siteWebList;
+        // this.rechercheBarre._func=this._onClick;
+
+      });
+    //RECHERCHE BARRE--------------------------------------------
+
+
 
   }
 
