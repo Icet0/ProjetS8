@@ -2,7 +2,7 @@ from asyncio.windows_events import NULL
 from concurrent.futures import thread
 from distutils.log import error
 from urllib import response
-from flask import Flask,render_template,request,jsonify,redirect, url_for,Response,stream_with_context
+from flask import Flask,render_template, request, jsonify, redirect, url_for, Response, stream_with_context
 import json
 import pandas as pd
 from flask import make_response
@@ -139,7 +139,7 @@ def visualisation_rooting():
           response = jsonify(de)
           return makeRequestHeaders(response)
     return visualisation(login)
-    
+
 def visualisation():
       # data = [{"lol":1,"cocorico":"ZARBI"},{"lol":2,"cocorico":"WTF"}] #exemple de la forme de donnée à retourner
       data = getTAB().to_dict(orient = 'records')
