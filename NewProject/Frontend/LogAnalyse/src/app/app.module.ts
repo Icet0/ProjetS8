@@ -24,7 +24,6 @@ import {ScrollingModule} from "@angular/cdk/scrolling";
 import { VisualisationSiteqComponent } from './visualisation-siteq/visualisation-siteq.component';
 import {MatButtonModule} from "@angular/material/button";
 import { CarteWidgetComponent } from './Widgets/carte-widget/carte-widget.component';
-import { CarteViewComponent } from './Views/carte-view/carte-view.component';
 
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
@@ -40,7 +39,6 @@ import { NavbarDecoComponent } from './navbar-deco/navbar-deco.component';
     AffluenceComponent,
     VisualisationSiteqComponent,
     CarteWidgetComponent,
-    CarteViewComponent,
     VisualisationSiteqComponent,
     RegisterComponent,
     LoginComponent,

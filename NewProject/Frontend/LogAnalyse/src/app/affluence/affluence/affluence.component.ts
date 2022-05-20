@@ -249,10 +249,6 @@ export class AffluenceComponent implements OnInit,ImplRecherche {
       this.rechercheBarre.filteredOptions=this.filteredOptions;
       this.rechercheBarre.siteWebList = this.siteWebList;
 
-      // this.rechercheBarreAdd.myControl=this.myControl;
-      // this.rechercheBarreAdd.selectChange=this.selectChange;
-      // this.rechercheBarreAdd.filteredOptions=this.filteredOptions;
-      // this.rechercheBarreAdd.siteWebList = this.siteWebList;
     }
   }
 
