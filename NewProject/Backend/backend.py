@@ -1,7 +1,7 @@
 from asyncio.windows_events import NULL
 from concurrent.futures import thread
 from distutils.log import error
-from flask import Flask,render_template,request,jsonify,redirect, url_for,Response,stream_with_context
+from flask import Flask,render_template, request, jsonify, redirect, url_for, Response, stream_with_context
 import json
 import pandas as pd
 from flask import make_response
