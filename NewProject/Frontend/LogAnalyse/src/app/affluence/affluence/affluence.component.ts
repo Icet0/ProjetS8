@@ -11,7 +11,7 @@ import {map, startWith} from 'rxjs/operators';
 import {clone} from "chart.js/helpers";
 import {HttpClient} from "@angular/common/http";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {ImplRecherche, RechercheSiteComponent} from "../../recherche-site/recherche-site.component";
+import {ImplRecherche, RechercheSiteComponent} from "../../Widgets/recherche-site/recherche-site.component";
 import {copyArrayItem} from "@angular/cdk/drag-drop";
 import {CookieService} from "ngx-cookie-service";
 

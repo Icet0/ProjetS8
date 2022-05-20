@@ -8,8 +8,8 @@ import {CarteViewComponent} from "./Views/carte-view/carte-view.component";
 import {RegisterComponent} from "./register/register.component";
 import {LoginComponent} from "./login/login.component";
 
-import {RechercheSiteComponent} from "./recherche-site/recherche-site.component";
-import {AuthGuardService} from "./authGuard/auth-guard.service";
+import {RechercheSiteComponent} from "./Widgets/recherche-site/recherche-site.component";
+import {AuthGuardService} from "./Service/authGuard/auth-guard.service";
 const routes: Routes = [
 
   // {path: '',redirectTo:"/login",pathMatch:'full'},//A voir si on

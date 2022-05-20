@@ -28,7 +28,7 @@ import { CarteViewComponent } from './Views/carte-view/carte-view.component';
 
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
-import { RechercheSiteComponent } from './recherche-site/recherche-site.component';
+import { RechercheSiteComponent } from './Widgets/recherche-site/recherche-site.component';
 import { NavbarDecoComponent } from './navbar-deco/navbar-deco.component';
 
 
@@ -40,13 +40,13 @@ import { NavbarDecoComponent } from './navbar-deco/navbar-deco.component';
     AffluenceComponent,
     VisualisationSiteqComponent,
     CarteWidgetComponent,
-    CarteViewComponent
+    CarteViewComponent,
     VisualisationSiteqComponent,
     RegisterComponent,
     LoginComponent,
     VisualisationSiteqComponent,
     RechercheSiteComponent,
-    NavbarDecoComponent
+    NavbarDecoComponent,
 
   ],
     imports: [

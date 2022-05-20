@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Router} from "@angular/router";
 import {HttpClient} from "@angular/common/http";
-import {MessageService} from "../message/message.service";
+import {MessageService} from "../Service/message/message.service";
 import {CookieService} from "ngx-cookie-service";
 
 @Component({

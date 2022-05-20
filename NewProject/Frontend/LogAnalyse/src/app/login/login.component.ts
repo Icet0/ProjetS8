@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
-import {MessageService} from "../message/message.service";
+import {MessageService} from "../Service/message/message.service";
 import {CookieService} from "ngx-cookie-service";
+
 
 @Component({
   selector: 'app-login',
@@ -43,7 +44,7 @@ export class LoginComponent implements OnInit {
         console.log(phpData);
         if(phpData.data){
           console.log('données : '+this.login);
-          this.envServiceService.set("loginCookie",this.login);
+          this.envServiceService.set("loginCookie",this.login,undefined,"/");
           this.router.navigateByUrl('/');
         }
         else {
