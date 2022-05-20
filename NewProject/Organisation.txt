@@ -1,0 +1,27 @@
+Date de Rendu du Rapport et fin du Code -> 23 Mai minuit  : 8 jours
+
+Rapport Premiere Version : Vendredi Soir
+
+Code : Samedi Soir
+-> Map : A Finir Mais Rapide Bilal
+-> Page de connexion
+	-> Front Georges
+	-> Trouver comment sauvegarder un cookies de Session P/G
+	-> Rajouter un cookies de session dans chaque POST P/G
+-> ML prediction Bilal
+-> Docker Paul
+-> Design Georges
+
+
+SLide :  Doit etre fait dans le Week end
+
+Rapport :
+1 Bilal
+2 Bilal
+3 Georges
+4 Paul
+5 Bilal
+6 Georges
+7 Bilal
+8 Paul
+9 Georges
