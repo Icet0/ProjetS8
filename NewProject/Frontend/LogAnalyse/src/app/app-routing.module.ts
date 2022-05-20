@@ -4,7 +4,6 @@ import {VisualisationComponent} from "./visualisation/visualisation.component";
 import {AffluenceComponent} from "./affluence/affluence/affluence.component";
 import {VisualisationSiteqComponent} from "./visualisation-siteq/visualisation-siteq.component";
 import {CarteWidgetComponent} from "./Widgets/carte-widget/carte-widget.component";
-import {CarteViewComponent} from "./Views/carte-view/carte-view.component";
 import {RegisterComponent} from "./register/register.component";
 import {LoginComponent} from "./login/login.component";
 
@@ -14,7 +13,7 @@ const routes: Routes = [
 
   // {path: '',redirectTo:"/login",pathMatch:'full'},//A voir si on
   {path: 'visualisation', component:VisualisationComponent,canActivate: [AuthGuardService]},
-  {path: 'carte', component:CarteViewComponent,canActivate: [AuthGuardService]},
+  {path: 'carte', component:CarteWidgetComponent,canActivate: [AuthGuardService]},
   {path: 'affluence', component:AffluenceComponent,canActivate: [AuthGuardService]},
   {path: 'visualisation/site', component:VisualisationSiteqComponent,canActivate: [AuthGuardService]},
   {path: 'register', component:RegisterComponent,},
