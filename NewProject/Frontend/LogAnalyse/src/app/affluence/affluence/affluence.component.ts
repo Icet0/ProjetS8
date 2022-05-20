@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angula
 import {ChartConfiguration, ChartDataset, ChartEvent, ChartType} from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import annotationPlugin from 'chartjs-plugin-annotation';
-import {MessageService} from "../../message/message.service";
+import {MessageService} from "../../Service/message/message.service";
 
 import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
@@ -11,7 +11,7 @@ import {map, startWith} from 'rxjs/operators';
 import {clone} from "chart.js/helpers";
 import {HttpClient} from "@angular/common/http";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {ImplRecherche, RechercheSiteComponent} from "../../recherche-site/recherche-site.component";
+import {ImplRecherche, RechercheSiteComponent} from "../../Widgets/recherche-site/recherche-site.component";
 import {copyArrayItem} from "@angular/cdk/drag-drop";
 import {CookieService} from "ngx-cookie-service";
 

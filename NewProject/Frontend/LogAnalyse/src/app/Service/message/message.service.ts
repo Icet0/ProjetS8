@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {DataFormat} from "./DataFormat";
 import {Observable} from "rxjs";
-import {environment} from "../../environments/environment";
+import {environment} from "../../../environments/environment";
 
 
 @Injectable({
@@ -33,5 +33,9 @@ export class MessageService {
     console.log("Form Data cookie = ",formData.get("loginCookie"));
     retour = this.service.post<DataFormat>(realUrl,formData,{withCredentials:true });
     return retour;
+  }
+
+  getmessage(url:string) : Observable<any>{
+    return this.service.get<any>(url) ;
   }
 }
