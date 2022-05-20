@@ -48,6 +48,7 @@ export class CarteWidgetComponent implements OnInit {
 
   }
 
+  public  recupererIPSite(){}
 
 
 

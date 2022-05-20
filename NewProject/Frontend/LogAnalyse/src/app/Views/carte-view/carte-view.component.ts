@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {CarteWidgetComponent} from "../../Widgets/carte-widget/carte-widget.component";
 
 @Component({
   selector: 'app-carte-view',
@@ -6,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./carte-view.component.scss']
 })
 export class CarteViewComponent implements OnInit {
+
+
 
   constructor() { }
 
