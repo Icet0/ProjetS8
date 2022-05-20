@@ -4,10 +4,6 @@ Rapport Premiere Version : Vendredi Soir
 
 Code : Samedi Soir
 -> Map : A Finir Mais Rapide Bilal
--> Page de connexion
-	-> Front Georges
-	-> Trouver comment sauvegarder un cookies de Session P/G
-	-> Rajouter un cookies de session dans chaque POST P/G
 -> ML prediction Bilal
 -> Docker Paul
 -> Design Georges
