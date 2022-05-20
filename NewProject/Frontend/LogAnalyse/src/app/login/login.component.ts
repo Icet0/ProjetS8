@@ -16,7 +16,6 @@ export class LoginComponent implements OnInit {
   errorMessage="";
   loginEnv!:string;
   constructor(private http:HttpClient,private message:MessageService,private router:Router,private envServiceService:CookieService) {
-    this.envServiceService=envServiceService;
   }
 
   ngOnInit(): void {

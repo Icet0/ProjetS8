@@ -8,15 +8,22 @@ import {RegisterComponent} from "./register/register.component";
 import {LoginComponent} from "./login/login.component";
 
 import {RechercheSiteComponent} from "./recherche-site/recherche-site.component";
+import {AuthGuardService} from "./authGuard/auth-guard.service";
 const routes: Routes = [
-  {path: 'visualisation', component:VisualisationComponent},
-  {path: 'carte', component:CarteComponent},
-  {path: 'affluence', component:AffluenceComponent},
-  {path: 'visualisation/site', component:VisualisationSiteqComponent},
-  {path: 'register', component:RegisterComponent},
+  // {path: '',redirectTo:"/login",pathMatch:'full'},//A voir si on
+  {path: 'visualisation', component:VisualisationComponent,canActivate: [AuthGuardService]},
+  {path: 'carte', component:CarteComponent,canActivate: [AuthGuardService]},
+  {path: 'affluence', component:AffluenceComponent,canActivate: [AuthGuardService]},
+  {path: 'visualisation/site', component:VisualisationSiteqComponent,canActivate: [AuthGuardService]},
+  {path: 'register', component:RegisterComponent,},
   {path: 'login', component:LoginComponent},
-  {path: 'recherche',component:RechercheSiteComponent},
+  // {path: 'recherche',component:RechercheSiteComponent},
 
+
+];
+
+export const appRoutingProviders: any[] = [
+  AuthGuardService
 ];
 
 @NgModule({
