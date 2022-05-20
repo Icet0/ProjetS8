@@ -15,7 +15,8 @@ export class NavbarComponent implements OnInit {
   }
   deconnexion(){
     console.log("Dans deconnexion");
-    this.envServiceService.deleteAll();
+    this.envServiceService.deleteAll("../");
+    this.envServiceService.delete("loginCookie","/","/");
     console.log(this.envServiceService.getAll());
     this.router.navigateByUrl('/login');
   }
