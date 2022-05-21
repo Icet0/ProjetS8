@@ -45,7 +45,7 @@ export class RegisterComponent implements OnInit {
         }
         else {
           console.log('données : '+phpData.data['status']);
-          this.errorMessage = phpData.data['status'];
+          this.errorMessage = phpData.status;
         }
       })
     }
