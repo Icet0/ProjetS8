@@ -14,7 +14,7 @@
     >
 
     <mat-autocomplete #auto="matAutocomplete">
-      <mat-option *ngFor="let site of filteredOptions | async" [value]="site" (onSelectionChange)="_onClick()">
+      <mat-option *ngFor="let site of filteredOptions | async" [value]="site"  (onSelectionChange)="_onClick()">
         {{site}}
       </mat-option>
     </mat-autocomplete>

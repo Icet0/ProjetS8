@@ -1,15 +1,18 @@
-<div class="full">
-
+<head>
+  <title> Carte des Visiteur</title>
+</head>
 
   <div id="map"></div>
 
-  <button > Mon boutton </button>
-
+  <div>
+<p>  <strong> Séléctionner un site pour visualiser les localisations des visiteurs </strong></p>
 <!--  BARRE DE RECHERCHE-->
   <app-recherche-site #RechercheSiteComponent [myControl]="myControl" [filteredOptions]="filteredOptions"
                       [implRechercheFunctions]="this"  [selectChange]="selectChange"
   ></app-recherche-site>
 <!-- BARRE DE RECHERCHE -->
 
-</div>
+  </div>
+
+
 
