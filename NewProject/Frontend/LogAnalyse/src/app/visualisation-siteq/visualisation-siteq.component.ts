@@ -116,7 +116,7 @@ export class VisualisationSiteqComponent implements OnInit {
   ngOnInit(): void {
     console.log("On init affluence ts");
     this.siteWebList = [""]
-    this.service.sendMessage("/topSite", {"loginCookie":this.cookieService.get("loginCookie")}).subscribe(
+    this.service.sendMessage("/topSite", {loginCookie:this.cookieService.get("loginCookie")}).subscribe(
       (dataSet) => {
         this.filteredOptions = this.myControl.valueChanges.pipe(
           startWith(''),
@@ -126,6 +126,17 @@ export class VisualisationSiteqComponent implements OnInit {
           let siteName: string = dataSet.data[i]["VisitedSite"].toString()
           this.siteWebList.push(siteName)
           // console.log(dataSet.data[i]["siteWeb"]);
+        }
+      });
+    this.service.sendMessage("/pageSite", {url :"saint-benoit-974.ville.mygaloo.fr","loginCookie":this.cookieService.get("loginCookie")}).subscribe(
+      (DataSetSite) => {
+        console.log(DataSetSite.data);
+        for(const info in DataSetSite.data ){
+          if (this.pieChartData.labels) {
+            this.pieChartData.labels.push(DataSetSite.data[info]["ConsultedPage"]);
+          }
+          this.pieChartData.datasets[0].data.push(DataSetSite.data[info]["nb_occur"]);
+          this.chart?.update();
         }
       });
   }

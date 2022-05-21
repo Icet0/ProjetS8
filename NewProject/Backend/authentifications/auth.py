@@ -86,12 +86,12 @@ def authentification(login=None,pwd=None):
     
         if(data.empty):
             data = False
-            status = "Mauvais Login"
+            status = "Login incorrect"
         else:
             data = data[data['pwd']==pwd]
             if(data.empty):
                 data = False
-                status = "Mauvais Pwd"
+                status = "Mauvais mot de passe"
             else:
                 data = True
                 #On enregistre le login actuel dans l'env
@@ -144,13 +144,13 @@ def addUser():
     status=json.loads(msg.data)["status"]
 
     print("MSG status : ",status)
-    print("try : ",status=="Mauvais Login")
+    print("try : ",status=="Login incorrect")
     data=None
-    if(status=="OK" or status=="Mauvais Pwd"):
+    if(status=="OK" or status=="Mauvais mot de passe"):
         data = False
         status = "User deja existant"
 
-    elif(status=="error" or status=="Mauvais Login"):
+    elif(status=="error" or status=="Login incorrect"):
         json_data = []
         json_d = {'login':login,'pwd':pwd}
         

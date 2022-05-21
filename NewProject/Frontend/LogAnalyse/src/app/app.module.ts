@@ -29,6 +29,7 @@ import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { RechercheSiteComponent } from './Widgets/recherche-site/recherche-site.component';
 import { NavbarDecoComponent } from './navbar-deco/navbar-deco.component';
+import { WelcomeComponent } from './welcome/welcome.component';
 
 
 @NgModule({
@@ -45,6 +46,7 @@ import { NavbarDecoComponent } from './navbar-deco/navbar-deco.component';
     VisualisationSiteqComponent,
     RechercheSiteComponent,
     NavbarDecoComponent,
+    WelcomeComponent,
 
   ],
     imports: [
