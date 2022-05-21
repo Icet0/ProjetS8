@@ -285,7 +285,7 @@ def getBestSiteWeb():
     df_site = df['VisitedSite']
     df_site = df.groupby('VisitedSite').size().to_frame(name = 'nb_occur').sort_values('nb_occur', ascending = False)
     df_site = df_site.reset_index()
-    df_site = df_site.head(15).to_dict(orient = 'records')
+    df_site = df_site.head(40).to_dict(orient = 'records')
     de = {"status":"OK",
             "data":df_site}
     response = gzip.compress(json.dumps(de).encode('utf8'), 5)
