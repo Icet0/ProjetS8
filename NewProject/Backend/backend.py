@@ -499,7 +499,32 @@ def visualisation_PageSite():
       return response
 
 #FONCTIONS LOAD DATASET
+@app.route("/IpSite",methods=['POST','GET'])
+def visualisation_IpSite():
+      try:
+        myUrl = request.environ['HTTP_ORIGIN']
+        #urlSite = request.form.get("urlSite")
+      except KeyError:
+        print("KeyError lol")
+        myUrl = '*'
+      if(request.method == "GET"):
+        #url = request.args.get("url")
+        search=request.args.get("recherche")
+      else:
+        #url = request.form.get('url')
+        ip = request.form.get("ip")
 
+      # data = [{"lol":1,"cocorico":"ZARBI"},{"lol":2,"cocorico":"WTF"}] #exemple de la forme de donnée à retourner
+      infoPage = getSiteByIp(getallTAB(),ip).to_dict(orient = 'records')
+      de = {"status":"OK",
+             "data":infoPage}
+      response = jsonify(de)
+      response.headers.add('Access-Control-Allow-Origin',myUrl)
+      response.headers.add('Access-Control-Allow-Credentials', 'true')
+      response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+      response.headers.add('Content-type','application/json')
+      response.headers.add('charset','utf8')
+      return response
 
 def getTAB():
     url = "./logs/dataset.txt"
@@ -533,7 +558,7 @@ def getSiteInfos(df,ip):
     return df[df['IP'] == ip]
 
 def getSiteInfos(df,url):
-    """ Fonction permettant de retourner un dataframe contenant la liste des sites visité par une adresse IP
+    """ Fonction permettant de retourner un dataframe contenant la liste des pages consultées par sites 
 
     paramètres : 
 
@@ -542,12 +567,31 @@ def getSiteInfos(df,url):
 
     retour : 
     
-    dc_info : dataframe listant les sites visité par l'ip.
+    dc_site : dataframe listant la liste des pages consultées par sites.
     
     """
     df_ip = df[df['VisitedSite'] == url] 
     df_site =  df_ip.groupby('ConsultedPage').size().to_frame(name = 'nb_occur').sort_values(by = 'nb_occur', ascending = False).reset_index().head(10)
     return df_site
+
+def getSiteByIp(df,ipaddr):
+    """ Fonction permettant de retourner un dataframe contenant la liste des sites visité par une adresse IP
+
+    paramètres : 
+
+    df : dataframe contenant tous les logs.
+    url : chaine de caractère decrivant l'url à avoir.
+    ip : adresse IP à analyser
+
+    retour : 
+    
+    df_ip : dataframe listant les sites visité par l'ip.
+      
+    """
+    df_ip = df[df['IP'] == ipaddr]
+    df_ip =  df_ip.groupby('VisitedSite').size().to_frame(name = 'nb_occur').sort_values(by = 'nb_occur', ascending = False).reset_index().head(10)
+    return df_ip
+
 
 def searchSiteAffluence(url):
     df = getallTAB()
