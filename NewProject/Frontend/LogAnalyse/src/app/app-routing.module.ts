@@ -7,6 +7,7 @@ import {CarteWidgetComponent} from "./Widgets/carte-widget/carte-widget.componen
 import {RegisterComponent} from "./register/register.component";
 import {LoginComponent} from "./login/login.component";
 import {WelcomeComponent} from "./welcome/welcome.component";
+import {AnalyseIpComponent} from "./analyse-ip/analyse-ip.component";
 
 import {RechercheSiteComponent} from "./Widgets/recherche-site/recherche-site.component";
 import {AuthGuardService} from "./Service/authGuard/auth-guard.service";
@@ -19,7 +20,8 @@ const routes: Routes = [
   {path: 'visualisation/site', component:VisualisationSiteqComponent,canActivate: [AuthGuardService]},
   {path: 'register', component:RegisterComponent,},
   {path: 'login', component:LoginComponent},
-  {path: 'welcome', component:WelcomeComponent}
+  {path: 'welcome', component:WelcomeComponent,canActivate: [AuthGuardService]},
+  {path: 'analyseIP', component:AnalyseIpComponent,canActivate: [AuthGuardService]}
   // {path: 'recherche',component:RechercheSiteComponent},
 
 

@@ -30,6 +30,7 @@ import { LoginComponent } from './login/login.component';
 import { RechercheSiteComponent } from './Widgets/recherche-site/recherche-site.component';
 import { NavbarDecoComponent } from './navbar-deco/navbar-deco.component';
 import { WelcomeComponent } from './welcome/welcome.component';
+import { AnalyseIpComponent } from './analyse-ip/analyse-ip.component';
 
 
 @NgModule({
@@ -47,6 +48,7 @@ import { WelcomeComponent } from './welcome/welcome.component';
     RechercheSiteComponent,
     NavbarDecoComponent,
     WelcomeComponent,
+    AnalyseIpComponent,
 
   ],
     imports: [
