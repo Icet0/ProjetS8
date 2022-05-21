@@ -46,10 +46,7 @@ export class CarteWidgetComponent implements OnInit,ImplRecherche {
       {apiKey : "AIzaSyCoSXfG5a2sQfy20dSJnCvjI-rBpJI7cFw"})
 
     loader.load().then(() => {
-      const infoWindow = new google.maps.InfoWindow({
-        content: "",
-        disableAutoPan: true,
-      });
+
       const center: google.maps.LatLngLiteral = {lat: 48.86, lng: 2.34445};
 
       this.map = new google.maps.Map(document.getElementById("map") as HTMLElement, {
@@ -57,16 +54,6 @@ export class CarteWidgetComponent implements OnInit,ImplRecherche {
         zoom: 6
       });
 
-      let label = "Adresse IP :"+this.ip +'<br>'+"nombre de visite: "+this.nb_occur;
-      const marker = new google.maps.Marker({
-        position: {lat: 48.86, lng: 2.34445},
-        map: this.map!,
-      });
-
-      marker.addListener("click", () => {
-        infoWindow.setContent(label);
-        infoWindow.open(this.map!, marker);
-      });
     });
 
     //RECHERCHE BARRE--------------------------------------------
