@@ -36,11 +36,6 @@ export class CarteWidgetComponent implements OnInit,ImplRecherche {
 
   //RECHERCHE BARRE ATTRIBUTES--------------------------------------------
 
-
-
-
-
-
   constructor(private service:MessageService,private cookieService:CookieService) { }
 
   ngOnInit(): void {

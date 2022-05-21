@@ -10,6 +10,7 @@ import gzip
 import os
 import requests
 import time
+import threading
 
 
 
@@ -325,6 +326,13 @@ def siteAffluence():
     response.headers['Content-Encoding'] = 'gzip'
     return response
 
+data = {
+    "IP": [],
+    "lat": [],
+    "lon": [],
+    "City": [] }
+
+
 @app.route("/RecupIP", methods = ['POST', 'GET'])
 def RecupIPVisiteur() :
     if (request.method == "GET"):
@@ -339,10 +347,21 @@ def RecupIPVisiteur() :
     else:
         res = None
 
-    res = IPtoCoord(res)
+    t1 = thread.threading.Thread(target=IPtoCoord, args=(res,))
+    t2 = thread.threading.Thread(target=IPtoCoord, args=(res,))
+    t3 = thread.threading.Thread(target=IPtoCoord, args=(res,))
 
+
+    t1.start()
+    t2.start()
+    t3.start()
+
+    t1.join()
+    t2.join()
+    t3.join()
+
+    res = pd.DataFrame(data).reset_index()
     res = res.to_dict(orient = 'records')
-
     de = {"status": "OK",
               "data": res}
 
@@ -359,16 +378,15 @@ def RecupIPVisiteur() :
 @app.route('/iptablee')
 def IPtoCoord(res):
 
-    data = {"IP": [],
-            "lat": [],
-            "lon": [],
-            "City": []};
+    data["IP"].clear()
+    data["lat"].clear()
+    data["lon"].clear()
+    data["City"].clear()
 
 
     api_url = "http://ip-api.com/json/"
-    for y in res["IP"]:
+    for y in res["IP"].sample(100):
         response_json = requests.get(api_url + y)
-        time.sleep(0.1)
         if (response_json.status_code == 200):
             response = response_json.json()
             data["IP"].append(y)
@@ -376,7 +394,7 @@ def IPtoCoord(res):
             data["lon"].append(response["lon"])
             data["City"].append(response["city"])
 
-    return data
+
 
 
 
