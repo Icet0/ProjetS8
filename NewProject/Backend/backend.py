@@ -349,16 +349,13 @@ def RecupIPVisiteur() :
 
     t1 = thread.threading.Thread(target=IPtoCoord, args=(res,))
     t2 = thread.threading.Thread(target=IPtoCoord, args=(res,))
-    t3 = thread.threading.Thread(target=IPtoCoord, args=(res,))
-
 
     t1.start()
     t2.start()
-    t3.start()
 
     t1.join()
     t2.join()
-    t3.join()
+
 
     res = pd.DataFrame(data).reset_index()
     res = res.to_dict(orient = 'records')
@@ -396,49 +393,6 @@ def IPtoCoord(res):
 
 
 
-
-
-    """
-    df2 = getallTAB()
-    df2 = deleteDoublon(df2, "IP")
-    df2 = df2.sample(25)
-    df2 = df2.dropna(how='any')
-   
-
-    # GET API to convert
- 
-
-    # Requete vers l'API pour convertir les IPs en latitude/longitude
-  
-
-     
-
-        latitude = Tab["lat"]
-        longitude = Tab["lon"]
-        ville = Tab["city"]
-
-        data["IP"].append(y)
-        data["lat"].append(latitude)
-        data["lon"].append(longitude)
-        data["City"].append(ville)
-
-    # Create DataFrame
-    convertedDF = pd.DataFrame(data)
-
-    return convertedDF
-
-
-
-    convertedDF_html = convertedDF.to_html()
-    text_file = open("./templates/IPTable.html", "w")
-    text_file.write(convertedDF_html)
-    text_file.close()
-
-    # Print the output.
-    # print(convertedDF)
-    return render_template("IPTable.html")
-    
-    """
 
 
 
