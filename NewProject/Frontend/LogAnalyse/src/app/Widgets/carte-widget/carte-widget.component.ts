@@ -124,11 +124,11 @@ export class CarteWidgetComponent implements OnInit,ImplRecherche {
     anchor: new google.maps.Point(15, 30),
   };
 
-            let label = "Adresse IP :"+this.ip +'<br>'+"nombre de visite: "+this.nb_occur;
+
 
           // Create markers.
           for (let element of Object.entries(this.ipList)) {
-
+              let label = "Adresse IP : "+ element[1][1].IP
             const marker = new google.maps.Marker({
               position:({lat : element[1][1].lat , lng :element[1][1].lon }),
               icon: svgMarker,

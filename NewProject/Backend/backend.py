@@ -330,7 +330,7 @@ data = {
     "IP": [],
     "lat": [],
     "lon": [],
-    "City": [] }
+    "City": [] ,}
 
 
 @app.route("/RecupIP", methods = ['POST', 'GET'])
