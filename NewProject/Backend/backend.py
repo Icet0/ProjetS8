@@ -9,6 +9,7 @@ from flask import make_response
 import gzip
 import os
 import requests
+import time
 
 
 
@@ -25,7 +26,7 @@ def __init__():
   os.environ["USERMODEL_PORT"] = "5050"
 
 
-@app.route("/",methods=['GET','POST'])
+@app.route("/", methods=['GET','POST'])
 def hello():
     login = getRequestLoginCookie(request)
     @isAuthenticate
@@ -324,6 +325,102 @@ def siteAffluence():
     response.headers['Content-Encoding'] = 'gzip'
     return response
 
+@app.route("/RecupIP", methods = ['POST', 'GET'])
+def RecupIPVisiteur() :
+    if (request.method == "GET"):
+        url = request.args.get("url")
+    else:
+        url = request.form.get('url')
+    if (url != None):
+        print("url : " + url)
+        res = searchIPVisiteur(url).reset_index(drop=True)
+        res = groupByIP(res)
+
+    else:
+        res = None
+
+    res = IPtoCoord(res)
+
+    res = res.to_dict(orient = 'records')
+
+    de = {"status": "OK",
+              "data": res}
+
+
+    de = json.dumps(de).encode('utf8')
+    response = gzip.compress(de, 5)
+    response = make_response(response)
+    response = makeRequestHeaders(response)
+    response.headers['Content-Encoding'] = 'gzip'
+    return response
+
+
+# Prendre des ip des local
+@app.route('/iptablee')
+def IPtoCoord(res):
+
+    data = {"IP": [],
+            "lat": [],
+            "lon": [],
+            "City": []};
+
+
+    api_url = "http://ip-api.com/json/"
+    for y in res["IP"]:
+        response_json = requests.get(api_url + y)
+        time.sleep(0.1)
+        if (response_json.status_code == 200):
+            response = response_json.json()
+            data["IP"].append(y)
+            data["lat"].append(response["lat"])
+            data["lon"].append(response["lon"])
+            data["City"].append(response["city"])
+
+    return data
+
+
+
+    """
+    df2 = getallTAB()
+    df2 = deleteDoublon(df2, "IP")
+    df2 = df2.sample(25)
+    df2 = df2.dropna(how='any')
+   
+
+    # GET API to convert
+ 
+
+    # Requete vers l'API pour convertir les IPs en latitude/longitude
+  
+
+     
+
+        latitude = Tab["lat"]
+        longitude = Tab["lon"]
+        ville = Tab["city"]
+
+        data["IP"].append(y)
+        data["lat"].append(latitude)
+        data["lon"].append(longitude)
+        data["City"].append(ville)
+
+    # Create DataFrame
+    convertedDF = pd.DataFrame(data)
+
+    return convertedDF
+
+
+
+    convertedDF_html = convertedDF.to_html()
+    text_file = open("./templates/IPTable.html", "w")
+    text_file.write(convertedDF_html)
+    text_file.close()
+
+    # Print the output.
+    # print(convertedDF)
+    return render_template("IPTable.html")
+    
+    """
 
 
 
@@ -442,6 +539,17 @@ def searchSiteAffluence(url):
         # A RAJOUTER TRI DU DATAFRAME (MOIS + ENLEVER LES ELTS INUTILES + CPT NB VISITE)
         return (df_site)
 
+# Fonction qui permet de recup les ip des visiteurs d'un site
+def searchIPVisiteur(url):
+    df = getallTAB()
+    df = pd.DataFrame(df, columns= ['IP', 'VisitedSite'])
+    if (url != "" and url != None):
+        df_site = df[df['VisitedSite'] == url]
+
+
+    df_site = pd.DataFrame(df_site, columns=['IP']).reset_index(drop=True)
+    return df_site
+
 def ajoutMois(df):
     for i in range(len(df)): 
          df.loc[i,"Mois"] = str((df.loc[i,"Date"])[5]) + str((df.loc[i,"Date"])[6])
@@ -464,6 +572,12 @@ def groupByHeurs(df):
     df = df.groupby("H").size().to_frame(name='count')
     df = df.reset_index()
     return df
+
+def groupByIP(df):
+    df = df.groupby("IP").size().to_frame(name='count')
+    df = df.reset_index()
+    return df.sort_values('count')
+
 
 if __name__ == "__main__":
     __init__()

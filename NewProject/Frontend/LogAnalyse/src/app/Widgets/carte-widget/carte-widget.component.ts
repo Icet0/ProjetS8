@@ -19,6 +19,9 @@ export class CarteWidgetComponent implements OnInit,ImplRecherche {
 
   private map! : google.maps.Map
 
+  private ipList! : string[]
+
+
   //RECHERCHE BARRE ATTRIBUTES--------------------------------------------
 
   siteWebList: string[] = ['One', 'Two', 'Three']
@@ -98,8 +101,59 @@ export class CarteWidgetComponent implements OnInit,ImplRecherche {
 
   }
 
-  public  recupererIPSite(){}//NE PAS OUBLER DE PASSER LE COOKIE DANS LE SEND MESSAGE : => this.service.sendMessage("/searchSite",{url:url,"loginCookie":this.cookieService.get("loginCookie")}).subscribe(
+  public  recupererIPSite(url:string){
 
+    this.ipList = []
+
+    if (url != null)
+    {
+      // REcupere les IP
+      this.service.sendMessage("/RecupIP", {url : url, "loginCookie":this.cookieService.get("loginCookie")}).subscribe(
+        e => {
+
+          for(const element of e.data )
+          {
+             this.ipList.push(element['IP'])
+          }
+
+          this.recupererLOC()
+        }
+    )
+
+
+    }
+
+
+  }//NE PAS OUBLER DE PASSER LE COOKIE DANS LE SEND MESSAGE : => this.service.sendMessage("/searchSite",{url:url,"loginCookie":this.cookieService.get("loginCookie")}).subscribe(
+
+  public recupererLOC (){
+
+    console.log("LOC")
+
+    if (this.ipList != null )
+    {
+      this.ipList.forEach( element =>
+        {
+
+
+        let url = `http://ip-api.com/json/${element}?fields=status,message,lat,lon`
+      this.service.sendMessage(url, {}).subscribe(
+
+        e=>{
+          console.log("rep : " , e)
+        }
+       )
+      }
+      )
+
+
+
+    }
+
+
+
+
+}
 
 
 
@@ -139,6 +193,7 @@ export class CarteWidgetComponent implements OnInit,ImplRecherche {
           //-------------------------------------------------
 
 
+         this.recupererIPSite(elem)
         }
       }
     );
@@ -148,13 +203,14 @@ export class CarteWidgetComponent implements OnInit,ImplRecherche {
     console.log("On enter");
     console.log(this.myControl.value);
     let elem = this.myControl.value;
+    console.log("Wshhhh")
     if(this.lastSiteUrlChoice != elem && elem.length > 0){
       console.log("nouveau site url");
       this.lastSiteUrlChoice = elem;
       //On lance la recherche sur l'API
       //RAJOUTER FONCTION QUI FAIT L'APPELLE VERS LE BACK
 
-      //-------------------------------------------------
+      this.recupererIPSite(elem)
     }
   }
   //RECHERCHE BARRE---------------------------------------------
