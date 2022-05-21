@@ -44,7 +44,7 @@ export class LoginComponent implements OnInit {
         if (phpData.data) {
           console.log('données : ' + this.login);
           this.envServiceService.set("loginCookie", this.login, undefined, "/");
-          this.router.navigateByUrl('/');
+          this.router.navigateByUrl('/welcome');
         } else {
           console.log('données : ' + phpData.status);
           this.errorMessage = phpData.status
