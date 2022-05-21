@@ -36,6 +36,7 @@ export class MessageService {
   }
 
   getmessage(url:string) : Observable<any>{
-    return this.service.get<any>(url) ;
+    let Realurl = environment.backend + url
+    return this.service.get<any>(Realurl) ;
   }
 }

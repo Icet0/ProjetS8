@@ -19,7 +19,7 @@ export class CarteWidgetComponent implements OnInit,ImplRecherche {
 
   private map! : google.maps.Map
 
-  private ipList! : string[]
+  private ipList! : any[]
 
 
   //RECHERCHE BARRE ATTRIBUTES--------------------------------------------
@@ -103,15 +103,13 @@ export class CarteWidgetComponent implements OnInit,ImplRecherche {
     if (url != null)
     {
       // REcupere les IP
-      this.service.sendMessage("/RecupIP", {url : url, "loginCookie":this.cookieService.get("loginCookie")}).subscribe(
+      this.service.getmessage(`/RecupIP?url=${url}`).subscribe(
         e => {
-
-          for(const element of e.data )
-          {
-             this.ipList.push(element['IP'])
+          for(const element of Object.entries(e.data) )   {
+             this.ipList.push(element)
           }
 
-          this.recupererLOC()
+          this.afficheMarker()
         }
     )
 
@@ -121,34 +119,14 @@ export class CarteWidgetComponent implements OnInit,ImplRecherche {
 
   }//NE PAS OUBLER DE PASSER LE COOKIE DANS LE SEND MESSAGE : => this.service.sendMessage("/searchSite",{url:url,"loginCookie":this.cookieService.get("loginCookie")}).subscribe(
 
-  public recupererLOC (){
+  public afficheMarker()
+  {
 
-    console.log("LOC")
-
-    if (this.ipList != null )
-    {
-      this.ipList.forEach( element =>
-        {
-
-
-        let url = `http://ip-api.com/json/${element}?fields=status,message,lat,lon`
-      this.service.sendMessage(url, {}).subscribe(
-
-        e=>{
-          console.log("rep : " , e)
-        }
-       )
-      }
-      )
-
-
-
-    }
+  }
 
 
 
 
-}
 
 
 
