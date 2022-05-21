@@ -175,59 +175,59 @@ def visualisation_rooting():
     return visualisation(login)
     
 
-@app.route("/tryAll",methods=['POST','GET'])
-def tryAll():
-      try:
-        myUrl = request.environ['HTTP_ORIGIN']
-      except KeyError:
-        print("KeyError lol")
-        myUrl = '*'
+# @app.route("/tryAll",methods=['POST','GET'])
+# def tryAll():
+#       try:
+#         myUrl = request.environ['HTTP_ORIGIN']
+#       except KeyError:
+#         print("KeyError lol")
+#         myUrl = '*'
       
-      data = getallTAB() #get all tab
-      data = data.head(5000)
-      data = data.to_dict(orient = 'records')
+#       data = getallTAB() #get all tab
+#       data = data.head(5000)
+#       data = data.to_dict(orient = 'records')
       
-      de = {"status":"OK",
-             "data":data}
+#       de = {"status":"OK",
+#              "data":data}
     
 
-      content = gzip.compress(json.dumps(de).encode('utf8'), 5)
-      response = make_response(content)
-      response = makeRequestHeaders(response)
-      response.headers['Content-Encoding'] = 'gzip'
-      return response
+#       content = gzip.compress(json.dumps(de).encode('utf8'), 5)
+#       response = make_response(content)
+#       response = makeRequestHeaders(response)
+#       response.headers['Content-Encoding'] = 'gzip'
+#       return response
 
 
 
     
-@app.route("/tryAll2",methods=['POST','GET'])
-def tryAll2():
-      # try:
-      #   myUrl = request.environ['HTTP_ORIGIN']
-      # except KeyError:
-      #   print("KeyError lol")
-      #   myUrl = '*'
+# @app.route("/tryAll2",methods=['POST','GET'])
+# def tryAll2():
+#       # try:
+#       #   myUrl = request.environ['HTTP_ORIGIN']
+#       # except KeyError:
+#       #   print("KeyError lol")
+#       #   myUrl = '*'
       
-      data = getallTAB() #get all tab
-      taille = data.shape[0]
-      data = data.to_dict(orient = 'records')
-      de = {"status":"OK",
-             "data":data}
+#       data = getallTAB() #get all tab
+#       taille = data.shape[0]
+#       data = data.to_dict(orient = 'records')
+#       de = {"status":"OK",
+#              "data":data}
     
-      response = de
-      @stream_with_context
-      def generate():       
-          print(taille)
-          for i in range(taille):
-              yield json.dumps(response["data"][i])
+#       response = de
+#       @stream_with_context
+#       def generate():       
+#           print(taille)
+#           for i in range(taille):
+#               yield json.dumps(response["data"][i])
 
-      # response = make_response(response)
-      # response.headers.add('Access-Control-Allow-Origin',myUrl)
-      # response.headers.add('Access-Control-Allow-Credentials', 'true')
-      # response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-      # response.headers.add('Content-type','application/json')
-      # response.headers.add('charset','utf8')
-      return Response(generate(), content_type='application/json')
+#       # response = make_response(response)
+#       # response.headers.add('Access-Control-Allow-Origin',myUrl)
+#       # response.headers.add('Access-Control-Allow-Credentials', 'true')
+#       # response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+#       # response.headers.add('Content-type','application/json')
+#       # response.headers.add('charset','utf8')
+#       return Response(generate(), content_type='application/json')
 
 
 
@@ -235,14 +235,17 @@ def tryAll2():
 
 @app.route("/afluence",methods=['POST'])
 def affluence():
-      
-      # data = [{"lol":1,"cocorico":"ZARBI"},{"lol":2,"cocorico":"WTF"}] #exemple de la forme de donnée à retourner
-      data = getTAB().to_dict(orient = 'records')
-      de = {"status":"OK",
-             "data":data}
-      response = jsonify(de)
-      
-      return makeRequestHeaders(response)
+      login = getRequestLoginCookie(request)
+      @isAuthenticate
+      def affluence_inside(login):
+        # data = [{"lol":1,"cocorico":"ZARBI"},{"lol":2,"cocorico":"WTF"}] #exemple de la forme de donnée à retourner
+        data = getTAB().to_dict(orient = 'records')
+        de = {"status":"OK",
+              "data":data}
+        response = jsonify(de)
+        
+        return makeRequestHeaders(response)
+      return affluence_inside(login)
 
 
 
@@ -267,64 +270,79 @@ def makeRequestHeaders(response):
 #page affluence
 @app.route('/site',methods=['POST'])
 def getSiteWeb():
-    df = getallTAB()
-    df_site = df['VisitedSite'].unique()
-    df_site = pd.DataFrame(df_site,columns=["siteWeb"]).to_dict(orient = 'records')
-    de = {"status":"OK",
-            "data":df_site}
-    # response = jsonify(de)
-    # return makeRequestHeaders(response)
-    response = gzip.compress(json.dumps(de).encode('utf8'), 5)
-    response = make_response(response)
-    response = makeRequestHeaders(response)
-    response.headers['Content-Encoding'] = 'gzip'
-    return response
+      login = getRequestLoginCookie(request)
+      @isAuthenticate
+      def getSiteWeb_inside(login):
+        df = getallTAB()
+        df_site = df['VisitedSite'].unique()
+        df_site = pd.DataFrame(df_site,columns=["siteWeb"]).to_dict(orient = 'records')
+        de = {"status":"OK",
+                "data":df_site}
+        # response = jsonify(de)
+        # return makeRequestHeaders(response)
+        response = gzip.compress(json.dumps(de).encode('utf8'), 5)
+        response = make_response(response)
+        response = makeRequestHeaders(response)
+        response.headers['Content-Encoding'] = 'gzip'
+        return response
+      return getSiteWeb_inside(login)
+    
+    
     
 @app.route('/topSite',methods=['POST','GET'])
 def getBestSiteWeb():
-  #TOP 15 SITE
-    df = getallTAB()
-    df_site = df['VisitedSite']
-    df_site = df.groupby('VisitedSite').size().to_frame(name = 'nb_occur').sort_values('nb_occur', ascending = False)
-    df_site = df_site.reset_index()
-    df_site = df_site.head(40).to_dict(orient = 'records')
-    de = {"status":"OK",
-            "data":df_site}
-    response = gzip.compress(json.dumps(de).encode('utf8'), 5)
-    response = make_response(response)
-    response = makeRequestHeaders(response)
-    response.headers['Content-Encoding'] = 'gzip'
-    return response
+    
+    login = getRequestLoginCookie(request)
+    @isAuthenticate
+    def getBestSiteWeb_inside(login):    
+        #TOP 40 SITE
+        df = getallTAB()
+        df_site = df['VisitedSite']
+        df_site = df.groupby('VisitedSite').size().to_frame(name = 'nb_occur').sort_values('nb_occur', ascending = False)
+        df_site = df_site.reset_index()
+        df_site = df_site.head(40).to_dict(orient = 'records')
+        de = {"status":"OK",
+                "data":df_site}
+        response = gzip.compress(json.dumps(de).encode('utf8'), 5)
+        response = make_response(response)
+        response = makeRequestHeaders(response)
+        response.headers['Content-Encoding'] = 'gzip'
+        return response
+    return getBestSiteWeb_inside(login)
 
 
 @app.route('/searchSite',methods=['POST','GET'])
 def siteAffluence():
-    if(request.method == "GET"):
-        url = request.args.get("url")
-        search=request.args.get("recherche")
-    else:
-        url = request.form.get('url')
-        search=request.form.get('recherche')
-    if(url != None):
-        print("url : "+url)
-        # A RAJOUTER TRI DU DATAFRAME (MOIS + ENLEVER LES ELTS INUTILES + CPT NB VISITE)
-        res = searchSiteAffluence(url).reset_index(drop=True)
-        if(search=="hours"):
-          df_Heurs = ajoutHeurs(res)
-          df_gb = groupByHeurs(df_Heurs)
-        else:
-          df_Mois = ajoutMois(res)
-          df_gb = groupByMois(df_Mois)
-        df_gb = df_gb.to_dict(orient = 'records')
-    else :
-      df_gb = None
-    de = {"status":"OK",
-            "data":df_gb}
-    response = gzip.compress(json.dumps(de).encode('utf8'), 5)
-    response = make_response(response)
-    response = makeRequestHeaders(response)
-    response.headers['Content-Encoding'] = 'gzip'
-    return response
+      login = getRequestLoginCookie(request)
+      @isAuthenticate
+      def siteAffluence_inside(login):
+          if(request.method == "GET"):
+              url = request.args.get("url")
+              search=request.args.get("recherche")
+          else:
+              url = request.form.get('url')
+              search=request.form.get('recherche')
+          if(url != None):
+              print("url : "+url)
+              # A RAJOUTER TRI DU DATAFRAME (MOIS + ENLEVER LES ELTS INUTILES + CPT NB VISITE)
+              res = searchSiteAffluence(url).reset_index(drop=True)
+              if(search=="hours"):
+                df_Heurs = ajoutHeurs(res)
+                df_gb = groupByHeurs(df_Heurs)
+              else:
+                df_Mois = ajoutMois(res)
+                df_gb = groupByMois(df_Mois)
+              df_gb = df_gb.to_dict(orient = 'records')
+          else :
+            df_gb = None
+          de = {"status":"OK",
+                  "data":df_gb}
+          response = gzip.compress(json.dumps(de).encode('utf8'), 5)
+          response = make_response(response)
+          response = makeRequestHeaders(response)
+          response.headers['Content-Encoding'] = 'gzip'
+          return response
+      return siteAffluence_inside(login)
 
 data = {
     "IP": [],
@@ -335,136 +353,107 @@ data = {
 
 @app.route("/RecupIP", methods = ['POST', 'GET'])
 def RecupIPVisiteur() :
-    if (request.method == "GET"):
-        url = request.args.get("url")
-    else:
-        url = request.form.get('url')
-    if (url != None):
-        print("url : " + url)
-        res = searchIPVisiteur(url).reset_index(drop=True)
-        res = groupByIP(res)
+      login = getRequestLoginCookie(request)
+      @isAuthenticate
+      def RecupIPVisiteur_inside(login):
+          if (request.method == "GET"):
+              url = request.args.get("url")
+          else:
+              url = request.form.get('url')
+          if (url != None):
+              print("url : " + url)
+              res = searchIPVisiteur(url).reset_index(drop=True)
+              res = groupByIP(res)
 
-    else:
-        res = None
+          else:
+              res = None
 
-    t1 = thread.threading.Thread(target=IPtoCoord, args=(res,))
-    t2 = thread.threading.Thread(target=IPtoCoord, args=(res,))
-    t3 = thread.threading.Thread(target=IPtoCoord, args=(res,))
-
-
-    t1.start()
-    t2.start()
-    t3.start()
-
-    t1.join()
-    t2.join()
-    t3.join()
-
-    res = pd.DataFrame(data).reset_index()
-    res = res.to_dict(orient = 'records')
-    de = {"status": "OK",
-              "data": res}
+          t1 = thread.threading.Thread(target=IPtoCoord, args=(res,))
+          t2 = thread.threading.Thread(target=IPtoCoord, args=(res,))
+          t3 = thread.threading.Thread(target=IPtoCoord, args=(res,))
 
 
-    de = json.dumps(de).encode('utf8')
-    response = gzip.compress(de, 5)
-    response = make_response(response)
-    response = makeRequestHeaders(response)
-    response.headers['Content-Encoding'] = 'gzip'
-    return response
+          t1.start()
+          t2.start()
+          t3.start()
+
+          t1.join()
+          t2.join()
+          t3.join()
+
+          res = pd.DataFrame(data).reset_index()
+          res = res.to_dict(orient = 'records')
+          de = {"status": "OK",
+                    "data": res}
+
+
+          de = json.dumps(de).encode('utf8')
+          response = gzip.compress(de, 5)
+          response = make_response(response)
+          response = makeRequestHeaders(response)
+          response.headers['Content-Encoding'] = 'gzip'
+          return response
+      return RecupIPVisiteur_inside(login)
 
 
 # Prendre des ip des local
 @app.route('/iptablee')
 def IPtoCoord(res):
-
-    data["IP"].clear()
-    data["lat"].clear()
-    data["lon"].clear()
-    data["City"].clear()
-
-
-    api_url = "http://ip-api.com/json/"
-    for y in res["IP"].sample(100):
-        response_json = requests.get(api_url + y)
-        if (response_json.status_code == 200):
-            response = response_json.json()
-            data["IP"].append(y)
-            data["lat"].append(response["lat"])
-            data["lon"].append(response["lon"])
-            data["City"].append(response["city"])
+    login = getRequestLoginCookie(request)
+    @isAuthenticate
+    def IptoCoord_inside(login):
+      data["IP"].clear()
+      data["lat"].clear()
+      data["lon"].clear()
+      data["City"].clear()
 
 
-
-
-
-    """
-    df2 = getallTAB()
-    df2 = deleteDoublon(df2, "IP")
-    df2 = df2.sample(25)
-    df2 = df2.dropna(how='any')
-   
-
-    # GET API to convert
- 
-
-    # Requete vers l'API pour convertir les IPs en latitude/longitude
-  
-
-     
-
-        latitude = Tab["lat"]
-        longitude = Tab["lon"]
-        ville = Tab["city"]
-
-        data["IP"].append(y)
-        data["lat"].append(latitude)
-        data["lon"].append(longitude)
-        data["City"].append(ville)
-
-    # Create DataFrame
-    convertedDF = pd.DataFrame(data)
-
-    return convertedDF
+      api_url = "http://ip-api.com/json/"
+      for y in res["IP"].sample(100):
+          response_json = requests.get(api_url + y)
+          if (response_json.status_code == 200):
+              response = response_json.json()
+              data["IP"].append(y)
+              data["lat"].append(response["lat"])
+              data["lon"].append(response["lon"])
+              data["City"].append(response["city"])
+    return IptoCoord_inside(login)
 
 
 
-    convertedDF_html = convertedDF.to_html()
-    text_file = open("./templates/IPTable.html", "w")
-    text_file.write(convertedDF_html)
-    text_file.close()
 
-    # Print the output.
-    # print(convertedDF)
-    return render_template("IPTable.html")
+
     
-    """
 
 
 
 @app.route('/isSite',methods=['POST','GET'])
 def isSite():
-    try:
-      if(request.form.get('url')!=None):
-        url = request.form.get('url')
-        df = getallTAB()
-        df_site = df[df['VisitedSite']==url].to_dict(orient = 'records')
-        de = {"status":"OK",
-              "data":df_site}
-        response = gzip.compress(json.dumps(de).encode('utf8'), 5)
-        response = make_response(response)
-        response = makeRequestHeaders(response)
-        response.headers['Content-Encoding'] = 'gzip'
-        return response
-      else:
-        raise ValueError('bad request')
-      
-    except ValueError:
-      print("error, bad request")
-      de = {"status":"error",
-            "data":"Bad request"}
-    finally:
-      return makeRequestHeaders(jsonify(de))
+    login = getRequestLoginCookie(request)
+    @isAuthenticate
+    def isSite_inside(login):
+      try:
+        if(request.form.get('url')!=None):
+          url = request.form.get('url')
+          df = getallTAB()
+          df_site = df[df['VisitedSite']==url].to_dict(orient = 'records')
+          de = {"status":"OK",
+                "data":df_site}
+          response = gzip.compress(json.dumps(de).encode('utf8'), 5)
+          response = make_response(response)
+          response = makeRequestHeaders(response)
+          response.headers['Content-Encoding'] = 'gzip'
+          return response
+        else:
+          raise ValueError('bad request')
+        
+      except ValueError:
+        print("error, bad request")
+        de = {"status":"error",
+              "data":"Bad request"}
+      finally:
+        return makeRequestHeaders(jsonify(de))
+    return isSite_inside(login)
 
     
 
@@ -475,28 +464,32 @@ def isSite():
 
 @app.route("/pageSite",methods=['POST','GET'])
 def visualisation_PageSite():
-      try:
-        myUrl = request.environ['HTTP_ORIGIN']
-        #urlSite = request.form.get("urlSite")
-      except KeyError:
-        print("KeyError lol")
-        myUrl = '*'
-      if(request.method == "GET"):
-        url = request.args.get("url")
-        search=request.args.get("recherche")
-      else:
-        url = request.form.get('url')
-      # data = [{"lol":1,"cocorico":"ZARBI"},{"lol":2,"cocorico":"WTF"}] #exemple de la forme de donnée à retourner
-      infoPage = getSiteInfos(getallTAB(),url).to_dict(orient = 'records')
-      de = {"status":"OK",
-             "data":infoPage}
-      response = jsonify(de)
-      response.headers.add('Access-Control-Allow-Origin',myUrl)
-      response.headers.add('Access-Control-Allow-Credentials', 'true')
-      response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-      response.headers.add('Content-type','application/json')
-      response.headers.add('charset','utf8')
-      return response
+      login = getRequestLoginCookie(request)
+      @isAuthenticate
+      def visualisation_PageSite_inside(login):
+        try:
+          myUrl = request.environ['HTTP_ORIGIN']
+          #urlSite = request.form.get("urlSite")
+        except KeyError:
+          print("KeyError lol")
+          myUrl = '*'
+        if(request.method == "GET"):
+          url = request.args.get("url")
+          search=request.args.get("recherche")
+        else:
+          url = request.form.get('url')
+        # data = [{"lol":1,"cocorico":"ZARBI"},{"lol":2,"cocorico":"WTF"}] #exemple de la forme de donnée à retourner
+        infoPage = getSiteInfos(getallTAB(),url).to_dict(orient = 'records')
+        de = {"status":"OK",
+              "data":infoPage}
+        response = jsonify(de)
+        response.headers.add('Access-Control-Allow-Origin',myUrl)
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Content-type','application/json')
+        response.headers.add('charset','utf8')
+        return response
+      return visualisation_PageSite_inside(login)
 
 #FONCTIONS LOAD DATASET
 @app.route("/IpSite",methods=['POST','GET'])
