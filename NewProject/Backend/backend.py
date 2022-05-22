@@ -425,8 +425,6 @@ def IPtoCoord(res):
 
     
 
-
-
 @app.route('/isSite',methods=['POST','GET'])
 def isSite():
     login = getRequestLoginCookie(request)
@@ -454,12 +452,6 @@ def isSite():
       finally:
         return makeRequestHeaders(jsonify(de))
     return isSite_inside(login)
-
-    
-
-
-
-
 
 
 @app.route("/pageSite",methods=['POST','GET'])
@@ -585,6 +577,37 @@ def getSiteByIp(df,ipaddr):
     df_ip =  df_ip.groupby('VisitedSite').size().to_frame(name = 'nb_occur').sort_values(by = 'nb_occur', ascending = False).reset_index().head(10)
     return df_ip
 
+
+@app.route('/affluenceip',methods=['POST','GET'])
+def ipAffluence():
+    if(request.method == "GET"):
+        ip = request.form.get('ip')
+    else:
+        ip = request.form.get('ip')
+
+    if(ip != None):
+        print("url : "+ip)
+        # A RAJOUTER TRI DU DATAFRAME (MOIS + ENLEVER LES ELTS INUTILES + CPT NB VISITE)
+        res = searchIpAffluence(ip).reset_index(drop=True)
+
+        df_Heurs = ajoutHeurs(res)
+        df_gb = groupByHeurs(df_Heurs)
+    df_gb = df_gb.to_dict(orient = 'records')
+    de = {"status":"OK",
+            "data":df_gb}
+    response = gzip.compress(json.dumps(de).encode('utf8'), 5)
+    response = make_response(response)
+    response = makeRequestHeaders(response)
+    response.headers['Content-Encoding'] = 'gzip'
+    return response
+
+def searchIpAffluence(ip):
+    df = getallTAB()
+    df = pd.DataFrame(df,columns=['Date', 'Heure', 'IP','VisitedSite','Mois'])
+    if(ip != "" and ip != None):
+        df_site = df[df['IP'] == ip]
+        # A RAJOUTER TRI DU DATAFRAME (MOIS + ENLEVER LES ELTS INUTILES + CPT NB VISITE)
+        return (df_site)
 
 def searchSiteAffluence(url):
     df = getallTAB()
