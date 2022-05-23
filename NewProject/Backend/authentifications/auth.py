@@ -32,19 +32,19 @@ def __init__():
 def hello():
     return 'Hello, World!'
 
-@app.route("/auth")#mapping de test
-def auth():
-    data = [{'login': 'paul', 'pwd': '123'}, {'login': 'paulo', 'pwd': '123'}]
-    # data = json.loads(decrypt(os.getenv("ENCRYPTED_FILE_PATH")))
+# @app.route("/auth")#mapping de test
+# def auth():
+#     data = [{'login': 'paul', 'pwd': '123'}, {'login': 'paulo', 'pwd': '123'}]
+#     # data = json.loads(decrypt(os.getenv("ENCRYPTED_FILE_PATH")))
 
 
-    data = pd.DataFrame(data,columns=["login","pwd"],index=[0]) if (len(data)<=1)  else pd.DataFrame(data,columns=["login","pwd"])
-    data = data.to_dict(orient = 'records')
-    print(data)
-    de = {"status":"test",
-            "data":data}
-    response = jsonify(de)
-    return makeRequestHeaders(response)
+#     data = pd.DataFrame(data,columns=["login","pwd"],index=[0]) if (len(data)<=1)  else pd.DataFrame(data,columns=["login","pwd"])
+#     data = data.to_dict(orient = 'records')
+#     print(data)
+#     de = {"status":"test",
+#             "data":data}
+#     response = jsonify(de)
+#     return makeRequestHeaders(response)
 
 
 @app.route("/allUser")
@@ -86,12 +86,12 @@ def authentification(login=None,pwd=None):
     
         if(data.empty):
             data = False
-            status = "Mauvais Login"
+            status = "Login incorrect"
         else:
             data = data[data['pwd']==pwd]
             if(data.empty):
                 data = False
-                status = "Mauvais Pwd"
+                status = "Mauvais mot de passe"
             else:
                 data = True
                 #On enregistre le login actuel dans l'env
@@ -144,13 +144,13 @@ def addUser():
     status=json.loads(msg.data)["status"]
 
     print("MSG status : ",status)
-    print("try : ",status=="Mauvais Login")
+    print("try : ",status=="Login incorrect")
     data=None
-    if(status=="OK" or status=="Mauvais Pwd"):
+    if(status=="OK" or status=="Mauvais mot de passe"):
         data = False
         status = "User deja existant"
 
-    elif(status=="error" or status=="Mauvais Login"):
+    elif(status=="error" or status=="Login incorrect"):
         json_data = []
         json_d = {'login':login,'pwd':pwd}
         
@@ -182,9 +182,9 @@ def addUser():
 
 
 #FUNCTIONS GET ADD REMOVE -------------------------------------------------------
-def addRootTry():
-    j = {'login':"root",'pwd':"root"}
-    encrypt(json.dumps(j),os.getenv("ENCRYPTED_FILE_PATH"))
+# def addRootTry():
+#     j = {'login':"root",'pwd':"root"}
+#     encrypt(json.dumps(j),os.getenv("ENCRYPTED_FILE_PATH"))
 
 def getBDD():
     try:
@@ -249,23 +249,6 @@ def decrypt(path):
     
 
 
-def test2():
-
-
-
-    # Import public key in PKCS#1 format, PEM encoded 
-    publicKeyReloaded = rsa.PublicKey.load_pkcs1(open_pem("PEM/pbk.pem").encode('utf8')) 
-    # Import private key in PKCS#1 format, PEM encoded 
-    privateKeyReloaded = rsa.PrivateKey.load_pkcs1(open_pem("PEM/pvk.pem").encode('utf8')) 
-
-    plaintext = "coucou je m'appelle paul !!".encode('ascii')
-    print("Plaintext: ", plaintext)
-
-    ciphertext = rsa.encrypt(plaintext, publicKeyReloaded)
-    print("Ciphertext: ", ciphertext)
-    
-    decryptedMessage = rsa.decrypt(ciphertext, privateKeyReloaded)
-    print("Decrypted message: ", decryptedMessage)
 
 
 def save_pem(key, path=None):
