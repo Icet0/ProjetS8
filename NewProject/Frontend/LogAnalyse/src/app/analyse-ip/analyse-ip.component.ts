@@ -8,6 +8,7 @@ import {FormControl, FormGroup} from "@angular/forms";
 import {Observable} from "rxjs";
 import {RechercheSiteComponent} from "../Widgets/recherche-site/recherche-site.component";
 import {clone} from "chart.js/helpers";
+import {map, startWith} from "rxjs/operators";
 @Component({
   selector: 'app-analyse-ip',
   templateUrl: './analyse-ip.component.html',
@@ -74,6 +75,19 @@ export class AnalyseIpComponent implements OnInit {
     this.chart?.update();
   }
   ngOnInit(): void {
+    this.ipList = [""]
+    this.service.sendMessage("/getIp", {loginCookie:this.cookieService.get("loginCookie")}).subscribe(
+      (dataSet) => {
+        this.filteredOptions = this.myControl.valueChanges.pipe(
+          startWith(''),
+          map(value => this._filter(value)),
+        );
+        for (let i in dataSet.data) {
+          let siteName: string = dataSet.data[i]["IP"].toString()
+          this.ipList.push(siteName)
+          // console.log(dataSet.data[i]["siteWeb"]);
+        }
+      });
     this.service.sendMessage("/IpSite", {ip :"144.76.185.173","loginCookie":this.cookieService.get("loginCookie")}).subscribe(
       (DataSetSite) => {
         console.log(DataSetSite.data);
@@ -103,7 +117,12 @@ export class AnalyseIpComponent implements OnInit {
         console.log(this.lineChartData.datasets[0].data);
       });
   }
-  siteWebList: string[] = ['One', 'Two', 'Three']
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.ipList.filter(ipList => ipList.toLowerCase().includes(filterValue));
+  }
+  ipList: string[] = ['One', 'Two', 'Three']
   myControl = new FormControl();
   filteredOptions!: Observable<string[]>;
   selectChange: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
@@ -282,6 +301,73 @@ export class AnalyseIpComponent implements OnInit {
     // coerce values so ti is between 0 and 1.
     const _opacity = Math.round(Math.min(Math.max(opacity || 1, 0), 1) * 255);
     return color + _opacity.toString(16).toUpperCase();
+  }
+  public _onClick(){
+    this.barChartData.datasets = [ {
+      data: [  ]
+    } ];
+    this.barChartData.labels = [ ];
+    console.log("On click");
+    this.myControl.valueChanges.subscribe(
+      (elem) => {
+        console.log("in suscribe");
+        console.log(elem);//ELEM EST LE SITE WEB CLIQUE
+        if(this.lastSiteUrlChoice != elem && elem.length > 0){
+          console.log("nouveau site url");
+          this.lastSiteUrlChoice = elem;
+          //On lance la recherche sur l'API
+          this._onClickPage(elem)
+        }
+      }
+    );
+  }
+
+  public _onEnter(){
+    this.barChartData.datasets = [ {
+      data: [  ]
+    } ];
+    this.barChartData.labels = [ ];
+    console.log("On enter");
+    console.log(this.myControl.value);
+    let elem = this.myControl.value;
+    if(this.lastSiteUrlChoice != elem && elem.length > 0){
+      console.log("nouveau site url");
+      this.lastSiteUrlChoice = elem;
+      //On lance la recherche sur l'API
+      this._onClickPage(elem)
+    }
+  }
+
+  public _onClickPage(ip:string){
+    console.log("On click");
+    console.log("On init visualisation ts");
+    this.service.sendMessage("/IpSite", {ip :ip,"loginCookie":this.cookieService.get("loginCookie")}).subscribe(
+      (DataSetSite) => {
+        console.log(DataSetSite.data);
+        for(const info in DataSetSite.data ){
+          console.log(DataSetSite.data);
+          if (this.barChartData.labels) {
+            this.barChartData.labels.push(DataSetSite.data[info]["VisitedSite"]);
+          }
+          this.barChartData.datasets[0].data.push(DataSetSite.data[info]["nb_occur"]);
+          this.chart?.update();
+
+        }
+      });
+   /* this.service.sendMessage("/affluenceip", {ip :ip,"loginCookie":this.cookieService.get("loginCookie")}).subscribe(
+      (DataSetSite) => {
+        let i = 0;
+        for(const info in DataSetSite.data ){
+          if (this.lineChartData.labels) {
+            //this.lineChartData.labels.push(DataSetSite.data[info]["H"]);
+            this.lineChartData.datasets[0].data[i] = DataSetSite.data[info]["count"];
+            console.log(DataSetSite.data[info]["count"]);
+            i++;
+          }
+        }
+        this.chart2?.update();
+        console.log(this.lineChartData.datasets[0].data);
+      });*/
   }
 
 }
