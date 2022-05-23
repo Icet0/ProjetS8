@@ -54,7 +54,7 @@ def authenticate():
     "login": login,
     "pwd": pwd,
     }
-    
+
     jsonObject = json.dumps(data)
 
     print(jsonObject)
@@ -80,8 +80,8 @@ def authenticate():
               "data":""}
         response = jsonify(de)
         return makeRequestHeaders(response)
-      
-      
+
+
 #On sera router ici si l'utilisateur veut s'identifier ou si il veut acceder e une page qui necessite une auth alors qu'il ne l'est pas
 @app.route("/register",methods=['GET','POST'])
 def register():
@@ -96,12 +96,12 @@ def register():
     "login": login,
     "pwd": pwd,
     }
-    
+
     print("data : ",data)
     jsonObject = json.dumps(data)
 
     print(jsonObject)
-    
+
     #REGISTER
     resRegister = requests.post(os.getenv("USERMODEL_PATH")+os.getenv("USERMODEL_PORT")+"/addUser", json=jsonObject)
     print(resRegister)
@@ -116,7 +116,7 @@ def register():
           "data":data}
     response = jsonify(de)
     return makeRequestHeaders(response)
-  
+
 
 
 
@@ -133,7 +133,7 @@ def getRequestLoginCookie(request):
         return login
     except:
         return ""
-    
+
 
 def isAuthenticate(func):
     def inner(login):
@@ -153,7 +153,7 @@ def isAuthenticate(func):
         response = jsonify(de)
         return makeRequestHeaders(response)
     return inner
-    
+
 
 
 
@@ -173,7 +173,7 @@ def visualisation_rooting():
           response = jsonify(de)
           return makeRequestHeaders(response)
     return visualisation(login)
-    
+
 
 # @app.route("/tryAll",methods=['POST','GET'])
 # def tryAll():
@@ -182,14 +182,14 @@ def visualisation_rooting():
 #       except KeyError:
 #         print("KeyError lol")
 #         myUrl = '*'
-      
+
 #       data = getallTAB() #get all tab
 #       data = data.head(5000)
 #       data = data.to_dict(orient = 'records')
-      
+
 #       de = {"status":"OK",
 #              "data":data}
-    
+
 
 #       content = gzip.compress(json.dumps(de).encode('utf8'), 5)
 #       response = make_response(content)
@@ -199,7 +199,7 @@ def visualisation_rooting():
 
 
 
-    
+
 # @app.route("/tryAll2",methods=['POST','GET'])
 # def tryAll2():
 #       # try:
@@ -207,16 +207,16 @@ def visualisation_rooting():
 #       # except KeyError:
 #       #   print("KeyError lol")
 #       #   myUrl = '*'
-      
+
 #       data = getallTAB() #get all tab
 #       taille = data.shape[0]
 #       data = data.to_dict(orient = 'records')
 #       de = {"status":"OK",
 #              "data":data}
-    
+
 #       response = de
 #       @stream_with_context
-#       def generate():       
+#       def generate():
 #           print(taille)
 #           for i in range(taille):
 #               yield json.dumps(response["data"][i])
@@ -243,7 +243,7 @@ def affluence():
         de = {"status":"OK",
               "data":data}
         response = jsonify(de)
-        
+
         return makeRequestHeaders(response)
       return affluence_inside(login)
 
@@ -286,15 +286,15 @@ def getSiteWeb():
         response.headers['Content-Encoding'] = 'gzip'
         return response
       return getSiteWeb_inside(login)
-    
-    
-    
+
+
+
 @app.route('/topSite',methods=['POST','GET'])
 def getBestSiteWeb():
-    
+
     login = getRequestLoginCookie(request)
     @isAuthenticate
-    def getBestSiteWeb_inside(login):    
+    def getBestSiteWeb_inside(login):
         #TOP 40 SITE
         df = getallTAB()
         df_site = df['VisitedSite']
@@ -310,6 +310,22 @@ def getBestSiteWeb():
         return response
     return getBestSiteWeb_inside(login)
 
+@app.route('/getIp',methods=['POST','GET'])
+def getBestIp():
+    login = getRequestLoginCookie(request)
+    @isAuthenticate
+    def getBestIp_inside(login):
+        #TOP 40 SITE
+        df = getallTAB()
+        df_site = groupByIP(df).head(40).to_dict(orient = 'records')
+        de = {"status":"OK",
+                "data":df_site}
+        response = gzip.compress(json.dumps(de).encode('utf8'), 5)
+        response = make_response(response)
+        response = makeRequestHeaders(response)
+        response.headers['Content-Encoding'] = 'gzip'
+        return response
+    return getBestIp_inside(login)
 
 @app.route('/searchSite',methods=['POST','GET'])
 def siteAffluence():
@@ -446,7 +462,7 @@ def isSite():
           return response
         else:
           raise ValueError('bad request')
-        
+
       except ValueError:
         print("error, bad request")
         de = {"status":"error",
@@ -532,48 +548,48 @@ def getallTAB():
 def getSiteInfos(df,ip):
     """ Fonction permettant de retourner un dataframe contenant la liste des sites visité par une adresse IP
 
-    paramètres : 
+    paramètres :
 
     df : dataframe contenant tous les logs.
     ip : chaine de caractère decrivant l'url à avoir.
 
-    retour : 
-    
+    retour :
+
      dataframe listant les sites visité par l'ip.
-    
+
     """
     return df[df['IP'] == ip]
 
 def getSiteInfos(df,url):
-    """ Fonction permettant de retourner un dataframe contenant la liste des pages consultées par sites 
+    """ Fonction permettant de retourner un dataframe contenant la liste des pages consultées par sites
 
-    paramètres : 
+    paramètres :
 
     df : dataframe contenant tous les logs.
     url : chaine de caractère decrivant l'url à avoir.
 
-    retour : 
-    
+    retour :
+
     dc_site : dataframe listant la liste des pages consultées par sites.
-    
+
     """
-    df_ip = df[df['VisitedSite'] == url] 
+    df_ip = df[df['VisitedSite'] == url]
     df_site =  df_ip.groupby('ConsultedPage').size().to_frame(name = 'nb_occur').sort_values(by = 'nb_occur', ascending = False).reset_index().head(10)
     return df_site
 
 def getSiteByIp(df,ipaddr):
     """ Fonction permettant de retourner un dataframe contenant la liste des sites visité par une adresse IP
 
-    paramètres : 
+    paramètres :
 
     df : dataframe contenant tous les logs.
     url : chaine de caractère decrivant l'url à avoir.
     ip : adresse IP à analyser
 
-    retour : 
-    
+    retour :
+
     df_ip : dataframe listant les sites visité par l'ip.
-      
+
     """
     df_ip = df[df['IP'] == ipaddr]
     df_ip =  df_ip.groupby('VisitedSite').size().to_frame(name = 'nb_occur').sort_values(by = 'nb_occur', ascending = False).reset_index().head(10)
@@ -631,7 +647,7 @@ def searchIPVisiteur(url):
     return df_site
 
 def ajoutMois(df):
-    for i in range(len(df)): 
+    for i in range(len(df)):
          df.loc[i,"Mois"] = str((df.loc[i,"Date"])[5]) + str((df.loc[i,"Date"])[6])
     return df.sort_values('Mois')
 
@@ -643,7 +659,7 @@ def groupByMois(df):
 
 
 def ajoutHeurs(df):
-    for i in range(len(df)): 
+    for i in range(len(df)):
          df.loc[i,"H"] = str((df.loc[i,"Heure"])[0]) + str((df.loc[i,"Heure"])[1])
     return df.sort_values('H')
 
