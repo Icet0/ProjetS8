@@ -353,9 +353,7 @@ data = {
 
 @app.route("/RecupIP", methods = ['POST', 'GET'])
 def RecupIPVisiteur() :
-      login = getRequestLoginCookie(request)
-      @isAuthenticate
-      def RecupIPVisiteur_inside(login):
+
           if (request.method == "GET"):
               url = request.args.get("url")
           else:
@@ -392,7 +390,6 @@ def RecupIPVisiteur() :
           response = makeRequestHeaders(response)
           response.headers['Content-Encoding'] = 'gzip'
           return response
-      return RecupIPVisiteur_inside(login)
 
 
 # Prendre des ip des local
@@ -414,7 +411,11 @@ def IPtoCoord(res):
 
 
     api_url = "http://ip-api.com/json/"
-    for y in res["IP"].sample(100):
+    try:
+      sample = res["IP"].sample(100)
+    except:
+      sample = res["IP"]
+    for y in sample:
         response_json = requests.get(api_url + y)
         if (response_json.status_code == 200):
             response = response_json.json()
