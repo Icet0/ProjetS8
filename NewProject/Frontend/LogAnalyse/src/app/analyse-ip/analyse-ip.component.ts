@@ -26,8 +26,6 @@ export class AnalyseIpComponent implements OnInit {
     scales: {
       x: {},
       y: {
-        min: 0,
-        max : 10
       }
     },
     plugins: {

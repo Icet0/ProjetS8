@@ -90,7 +90,7 @@ export class CarteWidgetComponent implements OnInit,ImplRecherche {
     if (url != null)
     {
       // REcupere les IP
-      this.service.getmessage(`/RecupIP?url=${url}`).subscribe(
+      this.service.getmessage('/RecupIP?url=${url}').subscribe(
         e => {
           for(const element of Object.entries(e.data) )   {
              this.ipList.push(element)

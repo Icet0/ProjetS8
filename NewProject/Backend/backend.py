@@ -370,55 +370,46 @@ data = {
 @app.route("/RecupIP", methods = ['POST', 'GET'])
 def RecupIPVisiteur() :
 
-          if (request.method == "GET"):
-              url = request.args.get("url")
-          else:
-              url = request.form.get('url')
-          if (url != None):
-              print("url : " + url)
-              res = searchIPVisiteur(url).reset_index(drop=True)
-              res = groupByIP(res)
 
-          else:
-              res = None
+    if (request.method == "GET"):
+        url = request.args.get("url")
+    else:
+        url = request.form.get('url')
+    if (url != None):
+        print("url : " + url)
+        res = searchIPVisiteur(url).reset_index(drop=True)
+        res = groupByIP(res)
 
-          t1 = thread.threading.Thread(target=IPtoCoord, args=(res,))
-          t2 = thread.threading.Thread(target=IPtoCoord, args=(res,))
+    else:
+        res = None
 
-          t1.start()
-          t2.start()
+    t1 = thread.threading.Thread(target=IPtoCoord, args=(res,))
+    t2 = thread.threading.Thread(target=IPtoCoord, args=(res,))
 
-          t1.join()
-          t2.join()
+    t1.start()
+    t2.start()
 
-
-
-
-          res = pd.DataFrame(data).reset_index()
-          res = res.to_dict(orient = 'records')
-          de = {"status": "OK",
-                    "data": res}
+    t1.join()
+    t2.join()
 
 
-          de = json.dumps(de).encode('utf8')
-          response = gzip.compress(de, 5)
-          response = make_response(response)
-          response = makeRequestHeaders(response)
-          response.headers['Content-Encoding'] = 'gzip'
-          return response
+    res = pd.DataFrame(data).reset_index()
+    res = res.to_dict(orient = 'records')
+    de = {"status": "OK",
+              "data": res}
+
+
+    de = json.dumps(de).encode('utf8')
+    response = gzip.compress(de, 5)
+    response = make_response(response)
+    response = makeRequestHeaders(response)
+    response.headers['Content-Encoding'] = 'gzip'
+    return response
 
 
 # Prendre des ip des local
 @app.route('/iptablee')
 def IPtoCoord(res):
-    login = getRequestLoginCookie(request)
-    @isAuthenticate
-    def IptoCoord_inside(login):
-      data["IP"].clear()
-      data["lat"].clear()
-      data["lon"].clear()
-      data["City"].clear()
-
 
     data["IP"].clear()
     data["lat"].clear()
@@ -673,8 +664,7 @@ def groupByHeurs(df):
 def groupByIP(df):
     df = df.groupby("IP").size().to_frame(name='count')
     df = df.reset_index()
-    return df.sort_values('count')
-
+    return df.sort_values('count',ascending = False)
 
 if __name__ == "__main__":
     __init__()
