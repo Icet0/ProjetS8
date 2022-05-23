@@ -348,7 +348,7 @@ data = {
     "IP": [],
     "lat": [],
     "lon": [],
-    "City": [] }
+    "City": [] ,}
 
 
 @app.route("/RecupIP", methods = ['POST', 'GET'])
@@ -370,16 +370,15 @@ def RecupIPVisiteur() :
 
           t1 = thread.threading.Thread(target=IPtoCoord, args=(res,))
           t2 = thread.threading.Thread(target=IPtoCoord, args=(res,))
-          t3 = thread.threading.Thread(target=IPtoCoord, args=(res,))
-
 
           t1.start()
           t2.start()
-          t3.start()
 
           t1.join()
           t2.join()
-          t3.join()
+
+
+
 
           res = pd.DataFrame(data).reset_index()
           res = res.to_dict(orient = 'records')
@@ -408,22 +407,25 @@ def IPtoCoord(res):
       data["City"].clear()
 
 
-      api_url = "http://ip-api.com/json/"
-      for y in res["IP"].sample(100):
-          response_json = requests.get(api_url + y)
-          if (response_json.status_code == 200):
-              response = response_json.json()
-              data["IP"].append(y)
-              data["lat"].append(response["lat"])
-              data["lon"].append(response["lon"])
-              data["City"].append(response["city"])
-    return IptoCoord_inside(login)
+    data["IP"].clear()
+    data["lat"].clear()
+    data["lon"].clear()
+    data["City"].clear()
+
+
+    api_url = "http://ip-api.com/json/"
+    for y in res["IP"].sample(100):
+        response_json = requests.get(api_url + y)
+        if (response_json.status_code == 200):
+            response = response_json.json()
+            data["IP"].append(y)
+            data["lat"].append(response["lat"])
+            data["lon"].append(response["lon"])
+            data["City"].append(response["city"])
 
 
 
 
-
-    
 
 @app.route('/isSite',methods=['POST','GET'])
 def isSite():

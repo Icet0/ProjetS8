@@ -19,7 +19,7 @@ export class CarteWidgetComponent implements OnInit,ImplRecherche {
 
   private map! : google.maps.Map
 
-  private ipList! : string[]
+  private ipList! : any[]
 
 
   //RECHERCHE BARRE ATTRIBUTES--------------------------------------------
@@ -46,10 +46,7 @@ export class CarteWidgetComponent implements OnInit,ImplRecherche {
       {apiKey : "AIzaSyCoSXfG5a2sQfy20dSJnCvjI-rBpJI7cFw"})
 
     loader.load().then(() => {
-      const infoWindow = new google.maps.InfoWindow({
-        content: "",
-        disableAutoPan: true,
-      });
+
       const center: google.maps.LatLngLiteral = {lat: 48.86, lng: 2.34445};
 
       this.map = new google.maps.Map(document.getElementById("map") as HTMLElement, {
@@ -57,16 +54,6 @@ export class CarteWidgetComponent implements OnInit,ImplRecherche {
         zoom: 6
       });
 
-      let label = "Adresse IP :"+this.ip +'<br>'+"nombre de visite: "+this.nb_occur;
-      const marker = new google.maps.Marker({
-        position: {lat: 48.86, lng: 2.34445},
-        map: this.map!,
-      });
-
-      marker.addListener("click", () => {
-        infoWindow.setContent(label);
-        infoWindow.open(this.map!, marker);
-      });
     });
 
     //RECHERCHE BARRE--------------------------------------------
@@ -103,15 +90,13 @@ export class CarteWidgetComponent implements OnInit,ImplRecherche {
     if (url != null)
     {
       // REcupere les IP
-      this.service.sendMessage("/RecupIP", {url : url, "loginCookie":this.cookieService.get("loginCookie")}).subscribe(
+      this.service.getmessage(`/RecupIP?url=${url}`).subscribe(
         e => {
-
-          for(const element of e.data )
-          {
-             this.ipList.push(element['IP'])
+          for(const element of Object.entries(e.data) )   {
+             this.ipList.push(element)
           }
 
-          this.recupererLOC()
+          this.afficheMarker()
         }
     )
 
@@ -121,34 +106,50 @@ export class CarteWidgetComponent implements OnInit,ImplRecherche {
 
   }//NE PAS OUBLER DE PASSER LE COOKIE DANS LE SEND MESSAGE : => this.service.sendMessage("/searchSite",{url:url,"loginCookie":this.cookieService.get("loginCookie")}).subscribe(
 
-  public recupererLOC (){
+  public afficheMarker()
+  {
 
-    console.log("LOC")
+      const infoWindow = new google.maps.InfoWindow({
+        content: "",
+        disableAutoPan: true,
+      });
 
-    if (this.ipList != null )
-    {
-      this.ipList.forEach( element =>
-        {
-
-
-        let url = `http://ip-api.com/json/${element}?fields=status,message,lat,lon`
-      this.service.sendMessage(url, {}).subscribe(
-
-        e=>{
-          console.log("rep : " , e)
-        }
-       )
-      }
-      )
+       const svgMarker = {
+    path: "M10.453 14.016l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM12 2.016q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z",
+    fillColor: "blue",
+    fillOpacity: 0.6,
+    strokeWeight: 0,
+    rotation: 0,
+    scale: 2,
+    anchor: new google.maps.Point(15, 30),
+  };
 
 
 
-    }
+          // Create markers.
+          for (let element of Object.entries(this.ipList)) {
+              let label = "Adresse IP : "+ element[1][1].IP
+            const marker = new google.maps.Marker({
+              position:({lat : element[1][1].lat , lng :element[1][1].lon }),
+              icon: svgMarker,
+              map: this.map,
+            });
+
+
+         marker.addListener("click", () => {
+          infoWindow.setContent(label);
+          infoWindow.open(this.map!, marker);
+        });
+
+          }
+
+  }
 
 
 
 
-}
+
+
 
 
 
@@ -186,8 +187,6 @@ export class CarteWidgetComponent implements OnInit,ImplRecherche {
           //exemple getIpSite()
 
           //-------------------------------------------------
-
-
          this.recupererIPSite(elem)
         }
       }

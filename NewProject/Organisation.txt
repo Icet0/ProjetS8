@@ -6,15 +6,15 @@ Date de Rendu du Rapport et fin du Code -> 23 Mai minuit  : 8 jours
 - Rapport
 
 Rapport Premiere Version : Vendredi Soir
+- Dans le Rapport parler du ML
 
 Code : Samedi Soir
--> Map : A Finir Mais Rapide Bilal
--> ML prediction Bilal
 -> Docker Paul
 -> Design Georges
 
 
 SLide :  Doit etre fait dans le Week end
+-
 
 Rapport :
 1 Bilal
@@ -25,4 +25,6 @@ Rapport :
 6 Georges
 7 Bilal
 8 Paul
-9 Georges
+11 Georges
+
+
