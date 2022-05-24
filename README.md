@@ -10,6 +10,6 @@ FrontEnd : se placer dans le dossier LogAnalyse et lancer les commandes suivante
 BackEnd :
 Lancer les programmes backend.py et auth.py avec les commandes suivantes
 
-### pip -r install requierment.txt
+### pip -r install requirements.txt
 ### python ./BackEnd.py
 ### python ./Auth.py
