@@ -12,5 +12,5 @@ BackEnd :
 Lancer les programmes backend.py et auth.py avec les commandes suivantes
 
 ### pip -r install requirements.txt
-### python ./backend/BackEnd.py
-### python ./backend/authentifications/Auth.py
+### python ./Backend/BackEnd.py
+### python ./Backend/authentifications/Auth.py
